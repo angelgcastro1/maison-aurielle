@@ -37,6 +37,7 @@
         });
         window.addEventListener("load", function () { ScrollTrigger.refresh(); });
         setTimeout(function () { ScrollTrigger.refresh(); }, 1200);
+        revealRescue();
       }
     } else {
       doc.classList.remove("anim");
@@ -191,6 +192,34 @@
     });
   }
 
+  /* ---------------- reveal rescue ----------------
+     Layout can shift while images/videos arrive, which can strand a
+     reveal animation un-fired — leaving invisible text and "empty"
+     sections. This safety net watches every reveal element and, if it
+     reaches the viewport still hidden, plays it visible. */
+  function revealRescue() {
+    if (!("IntersectionObserver" in window)) return;
+    var els = document.querySelectorAll("[data-reveal],[data-reveal-card],[data-reveal-prod],.reveal-mask [data-reveal-y]");
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var el = en.target;
+        // give the real animation a beat to run; if still hidden, rescue it
+        setTimeout(function () {
+          var cs = getComputedStyle(el);
+          var hidden = parseFloat(cs.opacity) < 0.15;
+          if (el.hasAttribute("data-reveal-y")) {
+            var m = cs.transform.match(/matrix\([^)]*,\s*(-?[\d.]+)\)$/);
+            hidden = m ? Math.abs(parseFloat(m[1])) > 8 : hidden;
+          }
+          if (hidden) gsap.to(el, { opacity: 1, y: 0, yPercent: 0, scale: 1, duration: 0.9, ease: "power3.out", overwrite: "auto" });
+        }, 700);
+        io.unobserve(el);
+      });
+    }, { threshold: 0.15 });
+    els.forEach(function (el) { io.observe(el); });
+  }
+
   function heroIntro() {
     var tl = gsap.timeline({ delay: 2.1 });
     var lines = document.querySelectorAll("#hero .reveal-mask [data-reveal-y]");
@@ -213,15 +242,22 @@
     if (!_scrubRunning) { _scrubRunning = true; requestAnimationFrame(scrubLoop); }
     return st;
   }
+  // On touch devices seeks are costly, so ease faster and only seek when
+  // the video has caught up with the previous seek (no queue pile-up).
+  var _seekMin = isTouch ? 0.045 : 0.008;
+  var _easeK = isTouch ? 0.24 : 0.16;
   function scrubLoop() {
     for (var i = 0; i < _scrubbers.length; i++) {
       var s = _scrubbers[i], vid = s.vid;
-      if (vid.duration && vid.readyState >= 1) {
+      if (vid.duration && vid.readyState >= 1 && !vid.seeking) {
         var target = s.st.progress || 0;
-        s.cur += (target - s.cur) * 0.16;
+        s.cur += (target - s.cur) * _easeK;
         if (Math.abs(target - s.cur) < 0.0006) s.cur = target;
         var tt = Math.min(vid.duration - 0.05, s.cur * vid.duration);
-        if (Math.abs(vid.currentTime - tt) > 0.008) { try { vid.currentTime = tt; } catch (e) {} }
+        if (Math.abs(vid.currentTime - tt) > _seekMin) {
+          if (vid.fastSeek && isTouch) { try { vid.fastSeek(tt); } catch (e) { try { vid.currentTime = tt; } catch (e2) {} } }
+          else { try { vid.currentTime = tt; } catch (e) {} }
+        }
       }
     }
     requestAnimationFrame(scrubLoop);
