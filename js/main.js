@@ -63,22 +63,41 @@
   function setupVideo(el, key, opt) {
     if (!el) return;
     var v = AURIELLE.video(key), p = AURIELLE.poster(key);
-    el.poster = p.primary; // best effort; scrim covers if absent
-    // Only fall back on a genuine load error — never on slowness, so a
-    // slow-but-loading source is never abandoned for a possibly-missing one.
-    var triedFallback = false;
-    el.addEventListener("error", function () {
-      if (triedFallback || !v.fallback || el.src.indexOf(v.fallback) !== -1) return;
-      triedFallback = true; el.src = v.fallback; el.load();
-    }, true);
+    el.poster = p.primary; // shows immediately while the clip downloads
+    el.muted = true; el.loop = !!opt.loop; el.preload = "auto";
     el.addEventListener("loadeddata", function () {
       el.classList.add("ready");
       if (opt.autoplay && !reduced) { var pr = el.play(); if (pr && pr.catch) pr.catch(function () {}); }
       else { try { el.pause(); } catch (e) {} }
       if (hasGSAP) ScrollTrigger.refresh();
     });
-    el.muted = true; el.loop = !!opt.loop;
-    el.src = v.primary; el.load();
+    // Fully download the clip, then play it from memory (a blob URL).
+    // This makes scroll-scrubbing instant regardless of how the file was
+    // encoded or hosted — identical to playing a local file. Falls back
+    // to normal streaming only if both fetches fail (e.g. offline file://).
+    function blobLoad(url, next) {
+      fetch(url).then(function (r) {
+        if (!r.ok) throw new Error(r.status);
+        return r.blob();
+      }).then(function (b) {
+        if (!b || b.size < 1024) throw new Error("empty");
+        el.src = URL.createObjectURL(b); el.load();
+      }).catch(function () {
+        if (next) blobLoad(next, null);
+        else { el.src = v.primary; el.load(); } // last resort: stream
+      });
+    }
+    if (window.location.protocol === "file:") {
+      // fetch() can't read local files — stream directly (fast from disk)
+      var triedFallback = false;
+      el.addEventListener("error", function () {
+        if (triedFallback || !v.fallback) return;
+        triedFallback = true; el.src = v.fallback; el.load();
+      }, true);
+      el.src = v.primary; el.load();
+    } else {
+      blobLoad(v.primary, v.fallback);
+    }
   }
 
   /* ---------------- loader ---------------- */
