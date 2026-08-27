@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0908" />
+<title>Maison Aurielle — Jewelry made for the moment it becomes unforgettable</title>
+<meta name="description" content="Maison Aurielle. A private showroom of fine jewelry, where light, gold and gemstone become memory. The Signature Collection." />
+<link rel="preconnect" href="https://d8j0ntlcm91z4.cloudfront.net" crossorigin />
+<link rel="stylesheet" href="css/styles.css" />
+<script>
+/* enable reveal animations early (prevents flash); self-heals if scripts fail */
+(function(){
+  var rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(!rm){
+    document.documentElement.className += ' anim';
+    window.addEventListener('load', function(){
+      setTimeout(function(){ if(!window.__aurielleReady) document.documentElement.classList.remove('anim'); }, 5000);
+    });
+  }
+})();
+</script>
+</head>
+<body>
+
+<!-- ============ PREMIUM LOADER ============ -->
+<div id="loader" aria-hidden="true">
+  <div class="loader__inner">
+    <div class="loader__mark">
+      <span class="loader__letters">MAISON AURIELLE</span>
+      <span class="loader__line"><i></i></span>
+    </div>
+    <div class="loader__meta"><span class="loader__pct">00</span><span>—</span><span>Entering the showroom</span></div>
+  </div>
+</div>
+
+<!-- ============ GRAIN + AMBIENT ============ -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ============ NAV ============ -->
+<header id="nav" class="nav" aria-label="Primary">
+  <a href="#hero" class="nav__brand" aria-label="Maison Aurielle — home">
+    <span class="nav__brand-mark">A</span>
+    <span class="nav__brand-name">MAISON AURIELLE</span>
+  </a>
+  <nav class="nav__links">
+    <a href="#story">The Maison</a>
+    <a href="#collection">Collection</a>
+    <a href="#craft">Craft</a>
+    <a href="#private">Private Viewing</a>
+  </nav>
+  <div class="nav__actions">
+    <button class="nav__cart" id="cartOpen" aria-label="Open your selection">
+      <span class="nav__cart-label">Selection</span>
+      <span class="nav__cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- side progress -->
+<div class="scrollrail" aria-hidden="true"><i id="scrollrailFill"></i></div>
+
+<main id="scroller">
+
+  <!-- ============ 1 · CINEMATIC HERO ============ -->
+  <section id="hero" class="hero" data-scene="hero">
+    <div class="hero__sticky">
+      <div class="hero__media">
+        <canvas class="hero__dust" id="heroDust" aria-hidden="true"></canvas>
+        <video class="hero__video" id="heroVideo" playsinline muted preload="auto"
+               data-local="assets/hero-spark.mp4" data-poster-local="assets/posters/hero.png"></video>
+        <div class="hero__vignette" aria-hidden="true"></div>
+      </div>
+      <div class="hero__content">
+        <p class="eyebrow reveal-line" data-reveal>The Signature Collection</p>
+        <h1 class="hero__title">
+          <span class="reveal-mask"><span data-reveal-y>Jewelry made for</span></span>
+          <span class="reveal-mask"><span data-reveal-y>the moment it becomes</span></span>
+          <span class="reveal-mask"><span data-reveal-y><em>unforgettable.</em></span></span>
+        </h1>
+        <div class="hero__cta reveal-line" data-reveal>
+          <a href="#collection" class="btn btn--gold" data-magnetic>Explore the Collection</a>
+        </div>
+      </div>
+      <div class="hero__scrollcue" aria-hidden="true">
+        <span>Scroll to enter</span><i></i>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2 · THE MAISON AURIELLE STORY ============ -->
+  <section id="story" class="story section">
+    <div class="story__glow" aria-hidden="true"></div>
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>The Maison Aurielle Story</p>
+      <div class="story__lead">
+        <h2 class="display display--xl">
+          <span class="reveal-mask"><span data-reveal-y>Aurielle begins</span></span>
+          <span class="reveal-mask"><span data-reveal-y>with light.</span></span>
+        </h2>
+      </div>
+      <div class="story__editorial">
+        <figure class="story__figure" data-reveal-card>
+          <div class="story__figclip">
+            <img class="story__img" alt="An elegant hand wearing the Aurielle ring, resting on champagne silk in a beam of warm light" data-local="assets/story/light.png" />
+          </div>
+          <span class="story__figcap">Light, held — the Aurielle signature stone</span>
+        </figure>
+        <div class="story__cols">
+          <p class="story__p" data-reveal>We started with a single question — how do you hold a moment forever? The answer was not a stone, but the way light moves through it.</p>
+          <p class="story__p" data-reveal>Every Aurielle piece is shaped around that light: the way it enters a gem, lingers on gold, and returns changed. Light becomes memory. Memory becomes legacy.</p>
+        </div>
+      </div>
+      <blockquote class="story__quote">
+        <span class="reveal-mask"><span data-reveal-y>“Made by hand, in small numbers,</span></span>
+        <span class="reveal-mask"><span data-reveal-y>for the people who will remember</span></span>
+        <span class="reveal-mask"><span data-reveal-y>exactly where they stood.”</span></span>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- ============ 3 · SIGNATURE COLLECTION REVEAL ============ -->
+  <section id="collection" class="collection section">
+    <div class="wrap">
+      <div class="section__head">
+        <p class="eyebrow" data-reveal>Signature Collection</p>
+        <h2 class="display display--lg" data-reveal>Placed, one by one,<br/>onto the velvet tray.</h2>
+      </div>
+    </div>
+    <div class="tray" id="tray">
+      <div class="tray__felt" aria-hidden="true"></div>
+      <ol class="tray__row" id="trayRow">
+        <li class="piece" data-piece="ring">
+          <div class="piece__img"><img alt="The Aurielle Ring — sculptural gold diamond ring with a color-shifting centre stone" data-local="assets/products/ring.png" /></div>
+          <div class="piece__cap"><span class="piece__idx">I</span><h3>The Aurielle Ring</h3><p>A quiet spark of forever, shaped in gold and light.</p></div>
+        </li>
+        <li class="piece" data-piece="necklace">
+          <div class="piece__img"><img alt="The Luma Necklace — fine gold necklace with a luminous diamond pendant" data-local="assets/products/necklace.png" /></div>
+          <div class="piece__cap"><span class="piece__idx">II</span><h3>The Luma Necklace</h3><p>A single point of brilliance, kept close to the heart.</p></div>
+        </li>
+        <li class="piece" data-piece="bracelet">
+          <div class="piece__img"><img alt="The Vale Bracelet — slender gold bracelet set with a line of diamonds" data-local="assets/products/bracelet.png" /></div>
+          <div class="piece__cap"><span class="piece__idx">III</span><h3>The Vale Bracelet</h3><p>A line of light that follows every gesture.</p></div>
+        </li>
+        <li class="piece" data-piece="earrings">
+          <div class="piece__img"><img alt="The Seraphine Earrings — sculptural gold drop earrings with cascading diamonds" data-local="assets/products/earrings.png" /></div>
+          <div class="piece__cap"><span class="piece__idx">IV</span><h3>The Seraphine Earrings</h3><p>Two cascades of fire, worn like a whisper.</p></div>
+        </li>
+        <li class="piece" data-piece="pendant">
+          <div class="piece__img"><img alt="The Éclat Gemstone Pendant — gold pendant with a large color-shifting gemstone" data-local="assets/products/pendant.png" /></div>
+          <div class="piece__cap"><span class="piece__idx">V</span><h3>The Éclat Pendant</h3><p>One stone. An endless weather of colour.</p></div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ 4 · CRAFTSMANSHIP & MATERIALS ============ -->
+  <section id="craft" class="craft" data-scene="craft">
+    <div class="craft__sticky">
+      <video class="craft__video" id="craftVideo" playsinline muted preload="auto"
+             data-local="assets/craftsmanship-detail.mp4" data-poster-local="assets/posters/craft.png"></video>
+      <div class="craft__scrim" aria-hidden="true"></div>
+      <div class="craft__caps">
+        <div class="wrap">
+          <p class="eyebrow eyebrow--light" data-reveal>Craftsmanship &amp; Materials</p>
+          <h2 class="display display--lg craft__title" data-reveal>Nothing here is rushed.</h2>
+        </div>
+      </div>
+      <ul class="craft__points" id="craftPoints" aria-hidden="false">
+        <li data-at="0.12"><span>01</span><h4>Stone setting</h4><p>Each stone is seated by hand, held by prongs shaped to disappear.</p></li>
+        <li data-at="0.36"><span>02</span><h4>Polished gold</h4><p>18k gold worked to a mirror, then softened where the light should rest.</p></li>
+        <li data-at="0.60"><span>03</span><h4>The cut</h4><p>Fifty-seven facets, angled for return — brilliance you feel before you see.</p></li>
+        <li data-at="0.82"><span>04</span><h4>Hand finishing</h4><p>A final pass under the loupe. Signed only when it is quietly perfect.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ 5 · DIAMOND & GEMSTONE DETAIL (interactive) ============ -->
+  <section id="gemstone" class="gem section" data-scene="gem">
+    <div class="gem__grid wrap">
+      <div class="gem__copy">
+        <p class="eyebrow" data-reveal>The Aurielle Ring</p>
+        <h2 class="display display--lg" data-reveal>Move the light.<br/>Watch it answer.</h2>
+        <p class="gem__lede" data-reveal>Take the ring in your hand and turn it. The solitaire throws fire, the gold catches the room, and the two accent stones drift through champagne, ice, emerald, violet, rose and sapphire — never quite the same twice.</p>
+        <ul class="gem__swatches" data-reveal>
+          <li style="--s:var(--champagne)">Champagne</li>
+          <li style="--s:var(--ice)">Icy blue</li>
+          <li style="--s:var(--emerald)">Emerald</li>
+          <li style="--s:var(--violet)">Violet</li>
+          <li style="--s:var(--rose)">Rose</li>
+          <li style="--s:var(--sapphire)">Sapphire</li>
+        </ul>
+        <p class="gem__hint" data-reveal><i></i>Click and drag to rotate the ring — swipe on touch.</p>
+      </div>
+      <div class="gem__stage">
+        <canvas id="gemCanvas" aria-label="Interactive 3D diamond ring you can drag to rotate" role="img"></canvas>
+        <div class="gem__fallback" id="gemFallback" aria-hidden="true">
+          <img alt="The Aurielle diamond ring" data-local="assets/ring/ring.png" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6 · THE GIFT EXPERIENCE ============ -->
+  <section id="gift" class="gift" data-scene="gift">
+    <div class="gift__sticky">
+      <video class="gift__video" id="giftVideo" playsinline muted preload="auto"
+             data-local="assets/gift-reveal.mp4" data-poster-local="assets/posters/gift.png"></video>
+      <div class="gift__scrim" aria-hidden="true"></div>
+      <div class="gift__content">
+        <div class="wrap">
+          <p class="eyebrow eyebrow--light" data-reveal>The Gift</p>
+          <h2 class="display display--xl gift__title">
+            <span class="reveal-mask"><span data-reveal-y>Some gifts end</span></span>
+            <span class="reveal-mask"><span data-reveal-y>the evening.</span></span>
+            <span class="reveal-mask"><span data-reveal-y><em>Others begin a story.</em></span></span>
+          </h2>
+          <p class="gift__p" data-reveal>Wrapped in champagne silk, sealed in a lacquered case, delivered for the anniversary, the yes, the just-because. Ready for the moment it becomes unforgettable.</p>
+          <a href="#products" class="btn btn--ghost" data-magnetic>Begin a Gift</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 7 · PRIVATE VIEWING / CONSULTATION ============ -->
+  <section id="private" class="private section">
+    <div class="wrap">
+      <div class="invite" data-reveal-card>
+        <div class="invite__edge" aria-hidden="true"></div>
+        <p class="eyebrow" data-reveal>By Appointment</p>
+        <h2 class="display display--lg" data-reveal>A private viewing,<br/>arranged for you alone.</h2>
+        <p class="invite__p" data-reveal>Meet with an Aurielle advisor in the salon or by video. See the collection under gallery light, hold each piece, and — if you wish — begin something entirely your own.</p>
+        <div class="invite__ctas" data-reveal>
+          <button class="btn btn--gold" data-open-consult="viewing" data-magnetic>Reserve a Private Viewing</button>
+          <button class="btn btn--line" data-open-consult="consultation">Book a Consultation</button>
+          <button class="btn btn--line" data-open-consult="custom">Begin a Custom Piece</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 8 · FEATURED PRODUCTS ============ -->
+  <section id="products" class="products section">
+    <div class="wrap">
+      <div class="section__head section__head--split">
+        <div>
+          <p class="eyebrow" data-reveal>Featured</p>
+          <h2 class="display display--lg" data-reveal>Five pieces,<br/>curated like a tray.</h2>
+        </div>
+        <p class="products__note" data-reveal>Each made to order in limited numbers. Every price includes lifetime care and insured delivery.</p>
+      </div>
+      <div class="products__grid" id="productsGrid">
+        <!-- cards injected by JS from AURIELLE.catalog -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 9 · TRUST, AUTHENTICITY & CARE ============ -->
+  <section id="trust" class="trust section">
+    <div class="wrap">
+      <div class="section__head section__head--center">
+        <p class="eyebrow" data-reveal>Assurance</p>
+        <h2 class="display display--lg" data-reveal>Everything quiet,<br/>everything certain.</h2>
+      </div>
+      <ul class="trust__grid">
+        <li data-reveal><h4>Certified materials</h4><p>Every diamond and gemstone arrives with independent certification and a lifetime record.</p></li>
+        <li data-reveal><h4>Ethical sourcing</h4><p>Conflict-free stones and recycled 18k gold, traceable from origin to setting.</p></li>
+        <li data-reveal><h4>Insured delivery</h4><p>Hand-delivered or fully insured worldwide, in signature packaging, tracked at every step.</p></li>
+        <li data-reveal><h4>Lifetime care</h4><p>Complimentary cleaning, inspection and re-polishing for as long as you own the piece.</p></li>
+        <li data-reveal><h4>Resizing &amp; repair</h4><p>Complimentary first resize, and expert restoration should life ever ask for it.</p></li>
+        <li data-reveal><h4>Secure &amp; simple</h4><p>Encrypted checkout, 30-day returns, and a private advisor on call for every order.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ 10 · CALL TO ACTION / LEGACY ============ -->
+  <section id="finale" class="finale" data-scene="finale">
+    <canvas class="finale__dust" id="finaleDust" aria-hidden="true"></canvas>
+    <div class="finale__box" aria-hidden="true">
+      <div class="finale__glow"></div>
+      <div class="finale__ring"><img alt="" data-local="assets/products/ring.png" /></div>
+    </div>
+    <div class="finale__content">
+      <h2 class="finale__title">
+        <span class="reveal-mask"><span data-reveal-y>Some pieces are worn.</span></span>
+        <span class="reveal-mask"><span data-reveal-y><em>Others are remembered.</em></span></span>
+      </h2>
+      <a href="#collection" class="btn btn--gold btn--lg" data-magnetic>Discover Maison Aurielle</a>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="foot">
+    <div class="wrap foot__grid">
+      <div class="foot__brand">
+        <span class="foot__mark">MAISON AURIELLE</span>
+        <p>Crafted in light. Kept for a lifetime.</p>
+        <ul class="foot__social" aria-label="Follow Maison Aurielle">
+          <li><a href="https://instagram.com/maisonaurielle" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.2" y="2.2" width="19.6" height="19.6" rx="5.2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4.1" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17.5" cy="6.5" r="1.15" fill="currentColor"/></svg></a></li>
+          <li><a href="https://pinterest.com/maisonaurielle" target="_blank" rel="noopener noreferrer" aria-label="Pinterest"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-3.64 19.32c-.09-.82-.17-2.08.03-2.98l1.15-4.86s-.29-.59-.29-1.46c0-1.37.79-2.39 1.78-2.39.84 0 1.25.63 1.25 1.39 0 .84-.54 2.1-.82 3.27-.23.98.49 1.78 1.46 1.78 1.75 0 2.94-2.25 2.94-4.91 0-2.02-1.36-3.54-3.84-3.54a4.37 4.37 0 0 0-4.55 4.4c0 .8.23 1.36.6 1.8.17.2.19.28.13.51l-.19.77c-.06.24-.26.33-.48.24-1.35-.55-1.98-2.03-1.98-3.7 0-2.75 2.32-6.05 6.92-6.05 3.7 0 6.14 2.68 6.14 5.56 0 3.8-2.11 6.64-5.23 6.64-1.05 0-2.03-.57-2.37-1.2l-.64 2.54c-.23.87-.68 1.74-1.09 2.42A10 10 0 1 0 12 2z"/></svg></a></li>
+          <li><a href="https://tiktok.com/@maisonaurielle" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.6 3c.32 2.02 1.53 3.5 3.4 3.77v2.62c-1.28 0-2.48-.4-3.4-1.07v5.9a5.55 5.55 0 1 1-5.55-5.55c.34 0 .68.03 1 .1v2.72a2.85 2.85 0 1 0 2 2.73V3h2.55z"/></svg></a></li>
+          <li><a href="https://facebook.com/maisonaurielle" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.5 21v-7.98h2.7l.4-3.13h-3.1V7.87c0-.9.25-1.52 1.55-1.52h1.65V3.55c-.29-.04-1.27-.12-2.42-.12-2.4 0-4.03 1.46-4.03 4.15v2.31H7.4v3.13h2.85V21h3.25z"/></svg></a></li>
+        </ul>
+      </div>
+      <nav class="foot__nav" aria-label="Footer">
+        <a href="#collection">Collection</a>
+        <a href="#craft">Craftsmanship</a>
+        <a href="#private">Private Viewing</a>
+        <a href="#trust">Care &amp; Assurance</a>
+      </nav>
+      <div class="foot__meta">
+        <p>© 2026 Maison Aurielle. A house of fine jewelry.</p>
+        <p class="foot__fine">This is a concept experience created for demonstration.</p>
+      </div>
+    </div>
+  </footer>
+
+</main>
+
+<!-- ============ VELVET-BOX CART DRAWER ============ -->
+<div class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer__scrim" id="drawerScrim"></div>
+  <aside class="drawer__box" role="dialog" aria-modal="true" aria-label="Your selection">
+    <div class="drawer__lid"><span></span></div>
+    <header class="drawer__head">
+      <h3>Your Selection</h3>
+      <button class="drawer__close" id="cartClose" aria-label="Close">Close</button>
+    </header>
+    <div class="drawer__body" id="drawerBody"><!-- items injected --></div>
+    <footer class="drawer__foot">
+      <div class="drawer__row"><span>Subtotal</span><span id="drawerTotal">—</span></div>
+      <p class="drawer__note">A private client advisor confirms every detail before anything is charged.</p>
+      <button class="btn btn--gold btn--block" id="checkoutBtn">Proceed to Checkout</button>
+    </footer>
+  </aside>
+</div>
+
+<!-- ============ CONSULTATION MODAL ============ -->
+<div class="modal" id="consult" aria-hidden="true">
+  <div class="modal__scrim" id="consultScrim"></div>
+  <div class="modal__card" role="dialog" aria-modal="true" aria-label="Request an appointment">
+    <button class="modal__close" id="consultClose" aria-label="Close">Close</button>
+    <p class="eyebrow">By Appointment</p>
+    <h3 class="display" id="consultTitle">Reserve a Private Viewing</h3>
+    <p class="modal__p">Leave your details and an Aurielle advisor will write to you personally within one day.</p>
+    <form class="modal__form" id="consultForm">
+      <label>Name<input type="text" name="name" autocomplete="name" required /></label>
+      <label>Email<input type="email" name="email" autocomplete="email" required /></label>
+      <label>What are you dreaming of?<textarea name="note" rows="3" placeholder="An engagement, an anniversary, a piece of your own…"></textarea></label>
+      <button type="submit" class="btn btn--gold btn--block">Request Appointment</button>
+      <p class="modal__ok" id="consultOk" hidden>Thank you — consider it reserved. We will be in touch shortly.</p>
+    </form>
+  </div>
+</div>
+
+<!-- vendored libraries (local, offline) -->
+<script src="vendor/three.min.js"></script>
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
+<!-- app -->
+<script src="js/local-assets.js"></script>
+<script src="js/media.js"></script>
+<script src="js/hero3d.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
