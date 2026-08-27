@@ -45,17 +45,23 @@ dl "$BASE/hf_20260706_054844_a0623321-330e-419b-ba35-c54224ec5351.png" assets/pr
 dl "$BASE/hf_20260706_054846_05e11312-023d-4c97-8137-e10df62ac587.png" assets/products/earrings.png
 dl "$BASE/hf_20260706_054848_083d3e20-ebee-466c-8a3b-0304d80d8893.png" assets/products/pendant.png
 
-echo "▸ Slicing optimized scroll frames…"
+echo "▸ Optimizing videos for smooth scroll-scrubbing (faststart + dense keyframes)…"
 if command -v ffmpeg >/dev/null 2>&1; then
-  slice () { # src  name  fps
-    ffmpeg -y -i "$1" -vf "fps=$3,scale=1280:-2:flags=lanczos" -q:v 4 "assets/frames/$2/%04d.jpg" >/dev/null 2>&1 \
-      && echo "  ✓ assets/frames/$2 ($(ls assets/frames/$2 | wc -l | tr -d ' ') frames)"
+  optimize () { # file
+    [ -f "$1" ] || return
+    ffmpeg -y -i "$1" -an -c:v libx264 -preset slow -crf 20 \
+      -g 6 -keyint_min 6 -sc_threshold 0 -pix_fmt yuv420p -movflags +faststart \
+      "$1.tmp.mp4" >/dev/null 2>&1 && mv "$1.tmp.mp4" "$1" \
+      && echo "  ✓ $(basename "$1")  ($(du -h "$1" | cut -f1))"
   }
-  slice assets/hero-spark.mp4          hero  24
-  slice assets/craftsmanship-detail.mp4 craft 24
-  slice assets/gift-reveal.mp4          gift  24
+  optimize assets/hero-spark.mp4
+  optimize assets/craftsmanship-detail.mp4
+  optimize assets/gift-reveal.mp4
+  optimize assets/finale.mp4
+  echo "  → metadata now loads instantly and every ~6th frame is a keyframe, so seeking is fast."
 else
-  echo "  – ffmpeg not found; skipping frame slicing. The site still works via downloaded video."
+  echo "  ✗ ffmpeg NOT found — without it the videos scrub poorly over the web."
+  echo "    Install it, then re-run this script:   macOS →  brew install ffmpeg"
 fi
 
 echo "▸ Switching site to local assets…"

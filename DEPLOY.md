@@ -9,13 +9,25 @@ accounts).
 
 ---
 
-## 1. Bundle the media (self-hosted)
+## 1. Bundle + optimize the media  ← REQUIRED (skipping this = 404s + laggy scrub)
 
-This downloads the cinematic videos + photography into `assets/` and switches the site to
-use local files (my build sandbox can't reach the media CDN, so this runs on your machine):
+First install ffmpeg — it re-encodes the videos so they stream and seek smoothly on the web:
+
+```bash
+brew install ffmpeg      # macOS
+```
+
+Then download + optimize all media into `assets/` (this also flips the site to local files):
 
 ```bash
 bash localize.sh
+```
+
+Verify before committing — you should see four mp4s and the local flag set:
+
+```bash
+ls -lh assets/*.mp4                 # hero-spark, craftsmanship-detail, gift-reveal, finale
+cat js/local-assets.js              # → window.AURIELLE_USE_LOCAL = true;
 ```
 
 ## 2. Create the repo & commit

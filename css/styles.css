@@ -217,7 +217,7 @@ html.anim .reveal-mask [data-reveal-y]{display:block;transform:translateY(115%)}
 .craft__caps{position:absolute;left:0;right:0;top:14vh;z-index:2}
 .craft__title{max-width:14ch}
 .craft__points{position:absolute;left:0;right:0;bottom:9vh;z-index:2;list-style:none;margin:0;padding:0 var(--pad);max-width:var(--maxw);margin:0 auto}
-.craft__points li{position:absolute;left:var(--pad);right:var(--pad);max-width:36ch;opacity:0;transform:translateY(24px);
+.craft__points li{position:absolute;left:var(--pad);right:var(--pad);bottom:0;max-width:36ch;opacity:0;transform:translateY(24px);
   transition:opacity .7s var(--ease),transform .7s var(--ease)}
 .craft__points li.on{opacity:1;transform:none}
 .craft__points span{font-family:var(--serif);font-size:.9rem;color:var(--gold);letter-spacing:.3em}

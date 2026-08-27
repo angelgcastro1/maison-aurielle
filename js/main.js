@@ -64,16 +64,14 @@
     if (!el) return;
     var v = AURIELLE.video(key), p = AURIELLE.poster(key);
     el.poster = p.primary; // best effort; scrim covers if absent
+    // Only fall back on a genuine load error — never on slowness, so a
+    // slow-but-loading source is never abandoned for a possibly-missing one.
     var triedFallback = false;
-    function useFallback() {
-      if (triedFallback || !v.fallback) return; triedFallback = true;
-      el.src = v.fallback; el.load();
-    }
-    el.addEventListener("error", useFallback, true);
-    el.addEventListener("stalled", function () { if (el.readyState < 1) useFallback(); });
-    var t = setTimeout(function () { if (el.readyState < 1) useFallback(); }, 3000);
+    el.addEventListener("error", function () {
+      if (triedFallback || !v.fallback || el.src.indexOf(v.fallback) !== -1) return;
+      triedFallback = true; el.src = v.fallback; el.load();
+    }, true);
     el.addEventListener("loadeddata", function () {
-      clearTimeout(t);
       el.classList.add("ready");
       if (opt.autoplay && !reduced) { var pr = el.play(); if (pr && pr.catch) pr.catch(function () {}); }
       else { try { el.pause(); } catch (e) {} }
