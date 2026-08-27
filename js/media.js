@@ -31,13 +31,13 @@ window.AURIELLE = (function () {
     "assets/posters/finale.png":    B + "hf_20260706_054146_f60cc815-402b-4ab6-87ec-cec6b55b645a.png"
   };
 
-  // Lightweight 854px encodes for phones/tablets (denser keyframes for
-  // slower mobile decoders) — picked automatically on coarse-pointer devices.
+  // Touch-device encodes: 1080px, high quality, dense keyframes — sharp on
+  // tablets while still decoding fast enough for smooth scroll-scrubbing.
   var MOBILE = {
-    "assets/hero-spark.mp4":           W + "4fa3e204-1026-4f2c-b196-bbef2bbaee20.mp4",
-    "assets/craftsmanship-detail.mp4": W + "6c74bca7-c27b-4874-9597-1ba14e509346.mp4",
-    "assets/gift-reveal.mp4":          W + "a9c37158-a4f5-4588-8565-7a91ea299761.mp4",
-    "assets/finale.mp4":               W + "af65ccbf-df6e-4327-8d23-cd8d8eb29e9f.mp4"
+    "assets/hero-spark.mp4":           W + "1c184008-b1fc-48fd-9ad9-bc5291c4f2bb.mp4",
+    "assets/craftsmanship-detail.mp4": W + "909eaf8a-ba78-4eb8-a74d-d2b814eeabe0.mp4",
+    "assets/gift-reveal.mp4":          W + "daf1a895-974a-4ada-a414-644e00cf4d19.mp4",
+    "assets/finale.mp4":               W + "6da1570c-8140-4ad7-97e8-1dc5961be598.mp4"
   };
   var IS_TOUCH = window.matchMedia && window.matchMedia("(hover:none)").matches;
 
