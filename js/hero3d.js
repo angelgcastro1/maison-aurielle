@@ -26,7 +26,7 @@ window.AurielleGem = (function () {
 
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
-    camera.position.set(0, 0, 5.4);
+    camera.position.set(0, 0, 5.9);
 
     // ---- procedural boutique environment ----
     function makeEnv() {
@@ -108,8 +108,8 @@ window.AurielleGem = (function () {
       ring.add(s); accents.push(s);
     });
 
-    ring.position.y = -0.35;
-    ring.scale.setScalar(1.12);
+    ring.position.y = -0.22;
+    ring.scale.setScalar(1.1);
     scene.add(ring);
 
     // ---- lights ----

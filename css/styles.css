@@ -318,9 +318,9 @@ html.anim .reveal-mask [data-reveal-y]{display:block;transform:translateY(115%)}
 /* ============================================================
    10 · FINALE
    ============================================================ */
-.finale{position:relative;height:320svh;background:radial-gradient(circle at 50% 55%,#161009,var(--noir) 62%)}
+.finale{position:relative;height:260svh;background:radial-gradient(circle at 50% 55%,#161009,var(--noir) 62%)}
 .finale__sticky{position:sticky;top:0;height:100svh;min-height:600px;overflow:hidden}
-.finale__video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.4s var(--ease)}
+.finale__video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.4s var(--ease);will-change:transform}
 .finale__video.ready{opacity:.96}
 .finale__dust{position:absolute;inset:0;z-index:2}
 .finale__scrim{position:absolute;inset:0;z-index:1;background:

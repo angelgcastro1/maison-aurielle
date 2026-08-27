@@ -32,17 +32,9 @@
       var lenis = initSmooth();
       chrome(lenis);
       if (!reduced) {
-        reveals();
-        heroIntro();
-        heroScene();
-        storyScene();
-        collectionTray();
-        craftScene();
-        giftScene();
-        productReveals();
-        trustReveals();
-        finaleScene();
-        magnetic();
+        [reveals, heroIntro, heroScene, storyScene, collectionTray, craftScene, giftScene, productReveals, trustReveals, finaleScene, magnetic].forEach(function (fn) {
+          try { fn(); } catch (e) { console.error("[Aurielle scene]", e); }
+        });
         window.addEventListener("load", function () { ScrollTrigger.refresh(); });
         setTimeout(function () { ScrollTrigger.refresh(); }, 1200);
       }
@@ -192,6 +184,32 @@
     if (cta) tl.fromTo(cta, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" }, 0.7);
   }
 
+  /* ---------------- smooth video scrubbing engine ----------------
+     Instead of snapping video.currentTime on every scroll event, we
+     track a smoothed ScrollTrigger progress and ease the video toward
+     it on a single rAF loop — the footage glides to the scroll position. */
+  var _scrubbers = [], _scrubRunning = false;
+  function smoothScrub(vid, sec) {
+    if (!vid || !sec) return null;
+    var st = ScrollTrigger.create({ trigger: sec, start: "top top", end: "bottom bottom", scrub: 0.6 });
+    _scrubbers.push({ vid: vid, st: st, cur: 0 });
+    if (!_scrubRunning) { _scrubRunning = true; requestAnimationFrame(scrubLoop); }
+    return st;
+  }
+  function scrubLoop() {
+    for (var i = 0; i < _scrubbers.length; i++) {
+      var s = _scrubbers[i], vid = s.vid;
+      if (vid.duration && vid.readyState >= 1) {
+        var target = s.st.progress || 0;
+        s.cur += (target - s.cur) * 0.16;
+        if (Math.abs(target - s.cur) < 0.0006) s.cur = target;
+        var tt = Math.min(vid.duration - 0.05, s.cur * vid.duration);
+        if (Math.abs(vid.currentTime - tt) > 0.008) { try { vid.currentTime = tt; } catch (e) {} }
+      }
+    }
+    requestAnimationFrame(scrubLoop);
+  }
+
   /* ---------------- hero: scroll-scrubbed cinema ---------------- */
   function heroScene() {
     var sec = document.getElementById("hero");
@@ -200,14 +218,11 @@
     var content = sec.querySelector(".hero__content");
     var cue = sec.querySelector(".hero__scrollcue");
     var dust = sec.querySelector(".hero__dust");
+    smoothScrub(vid, sec);
     ScrollTrigger.create({
       trigger: sec, start: "top top", end: "bottom bottom", scrub: true,
       onUpdate: function (self) {
         var pr = self.progress;
-        if (vid && vid.duration && vid.readyState >= 1) {
-          var tt = Math.min(vid.duration - 0.05, pr * vid.duration);
-          if (Math.abs(vid.currentTime - tt) > 0.03) { try { vid.currentTime = tt; } catch (e) {} }
-        }
         if (cue) cue.style.opacity = pr > 0.03 ? String(Math.max(0, 1 - (pr - 0.03) * 14)) : "1";
         if (content) content.style.opacity = pr < 0.55 ? "1" : String(Math.max(0, 1 - (pr - 0.55) / 0.33));
         if (dust) dust.style.opacity = String(Math.max(0.15, 1 - pr));
@@ -245,15 +260,12 @@
     var points = Array.prototype.map.call(document.querySelectorAll("#craftPoints li"), function (li) {
       return { el: li, at: parseFloat(li.getAttribute("data-at")) || 0 };
     });
+    smoothScrub(vid, sec);
     var active = -1;
     ScrollTrigger.create({
       trigger: sec, start: "top top", end: "bottom bottom", scrub: true,
       onUpdate: function (self) {
         var pr = self.progress;
-        if (vid && vid.duration && vid.readyState >= 1) {
-          var tt = Math.min(vid.duration - 0.05, pr * vid.duration);
-          if (Math.abs(vid.currentTime - tt) > 0.03) { try { vid.currentTime = tt; } catch (e) {} }
-        }
         var idx = -1;
         for (var i = 0; i < points.length; i++) { if (pr >= points[i].at) idx = i; }
         if (pr > 0.94) idx = points.length - 1;
@@ -276,15 +288,7 @@
     var sec = document.getElementById("gift");
     var vid = document.getElementById("giftVideo");
     if (!sec) return;
-    ScrollTrigger.create({
-      trigger: sec, start: "top top", end: "bottom bottom", scrub: true,
-      onUpdate: function (self) {
-        if (vid && vid.duration && vid.readyState >= 1) {
-          var tt = Math.min(vid.duration - 0.05, self.progress * vid.duration);
-          if (Math.abs(vid.currentTime - tt) > 0.03) { try { vid.currentTime = tt; } catch (e) {} }
-        }
-      }
-    });
+    smoothScrub(vid, sec);
     var lines = sec.querySelectorAll(".reveal-mask [data-reveal-y]");
     var others = sec.querySelectorAll(".eyebrow[data-reveal], .gift__p[data-reveal], .btn");
     var tl = gsap.timeline({ scrollTrigger: { trigger: sec, start: "top 55%" } });
@@ -372,21 +376,11 @@
     var vid = document.getElementById("finaleVideo");
     var title = document.querySelectorAll("#finale .reveal-mask [data-reveal-y]");
     var cta = document.querySelector("#finale .btn");
-    if (sec && vid) {
-      ScrollTrigger.create({
-        trigger: sec, start: "top top", end: "bottom bottom", scrub: true,
-        onUpdate: function (self) {
-          if (vid.duration && vid.readyState >= 1) {
-            var tt = Math.min(vid.duration - 0.05, self.progress * vid.duration);
-            if (Math.abs(vid.currentTime - tt) > 0.03) { try { vid.currentTime = tt; } catch (e) {} }
-          }
-        }
-      });
-    }
+    smoothScrub(vid, sec);
     if (vid && !reduced) {
       gsap.fromTo(vid, { scale: 1 }, {
-        scale: 1.32, ease: "power2.in", transformOrigin: "50% 46%",
-        scrollTrigger: { trigger: sec, start: "top top", end: "bottom bottom", scrub: true }
+        scale: 1.16, ease: "power2.in", transformOrigin: "50% 46%",
+        scrollTrigger: { trigger: sec, start: "top top", end: "bottom bottom", scrub: 0.6 }
       });
     }
     var tl = gsap.timeline({ scrollTrigger: { trigger: "#finale", start: "top 55%" } });
