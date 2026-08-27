@@ -65,6 +65,7 @@
     setupVideo(document.getElementById("heroVideo"), "hero", { loop: false, autoplay: false });
     setupVideo(document.getElementById("craftVideo"), "craft", { loop: false, autoplay: false });
     setupVideo(document.getElementById("giftVideo"), "gift", { loop: false, autoplay: false });
+    setupVideo(document.getElementById("finaleVideo"), "finale", { loop: false, autoplay: false });
   }
 
   function setupVideo(el, key, opt) {
@@ -303,6 +304,19 @@
       }, { threshold: 0.05 });
       io.observe(document.getElementById("gemstone"));
     } else if (!reduced) { gem.start(); }
+
+    // colour swatches — click to set the stone, click the active one again to resume drift
+    var swatches = document.querySelectorAll("#gemstone .gem__swatches li");
+    swatches.forEach(function (li) {
+      function activate() {
+        var wasActive = li.classList.contains("active");
+        swatches.forEach(function (s) { s.classList.remove("active"); });
+        if (wasActive) { if (gem.setColor) gem.setColor(null); }
+        else { li.classList.add("active"); if (gem.setColor) gem.setColor(li.getAttribute("data-color")); }
+      }
+      li.addEventListener("click", activate);
+      li.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(); } });
+    });
   }
   function fallbackTilt() {
     var stage = document.querySelector(".gem__stage");
@@ -354,14 +368,30 @@
   }
 
   function finaleScene() {
-    var box = document.querySelector(".finale__box");
+    var sec = document.getElementById("finale");
+    var vid = document.getElementById("finaleVideo");
     var title = document.querySelectorAll("#finale .reveal-mask [data-reveal-y]");
     var cta = document.querySelector("#finale .btn");
-    var tl = gsap.timeline({ scrollTrigger: { trigger: "#finale", start: "top 60%" } });
-    if (box) tl.fromTo(box, { opacity: 0, scale: 0.9, filter: "blur(6px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1.6, ease: "power2.out" }, 0);
-    if (title.length) tl.fromTo(title, { yPercent: 120 }, { yPercent: 0, duration: 1.3, ease: "power4.out", stagger: 0.14 }, 0.4);
-    if (cta) tl.fromTo(cta, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" }, 1.1);
-    if (!reduced && box) gsap.to(box, { yPercent: -8, ease: "none", scrollTrigger: { trigger: "#finale", start: "top bottom", end: "bottom top", scrub: true } });
+    if (sec && vid) {
+      ScrollTrigger.create({
+        trigger: sec, start: "top top", end: "bottom bottom", scrub: true,
+        onUpdate: function (self) {
+          if (vid.duration && vid.readyState >= 1) {
+            var tt = Math.min(vid.duration - 0.05, self.progress * vid.duration);
+            if (Math.abs(vid.currentTime - tt) > 0.03) { try { vid.currentTime = tt; } catch (e) {} }
+          }
+        }
+      });
+    }
+    if (vid && !reduced) {
+      gsap.fromTo(vid, { scale: 1 }, {
+        scale: 1.32, ease: "power2.in", transformOrigin: "50% 46%",
+        scrollTrigger: { trigger: sec, start: "top top", end: "bottom bottom", scrub: true }
+      });
+    }
+    var tl = gsap.timeline({ scrollTrigger: { trigger: "#finale", start: "top 55%" } });
+    if (title.length) tl.fromTo(title, { yPercent: 120 }, { yPercent: 0, duration: 1.3, ease: "power4.out", stagger: 0.14 }, 0);
+    if (cta) tl.fromTo(cta, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" }, 0.8);
   }
 
   /* ---------------- magnetic buttons ---------------- */

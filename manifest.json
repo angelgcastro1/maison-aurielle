@@ -6,7 +6,8 @@
   "video": {
     "hero-spark":            { "local": "assets/hero-spark.mp4",            "remote": "hf_20260706_054637_61033e62-c94b-460a-8144-d0883a867b3c.mp4", "res": "1920x1080", "seconds": 8 },
     "craftsmanship-detail":  { "local": "assets/craftsmanship-detail.mp4",  "remote": "hf_20260706_054640_dd2c15c0-9351-4835-a855-85136937024e.mp4", "res": "1920x1080", "seconds": 8 },
-    "gift-reveal":           { "local": "assets/gift-reveal.mp4",           "remote": "hf_20260706_054642_58167eed-fc97-47f4-b8ff-893ca980da5b.mp4", "res": "1920x1080", "seconds": 8 }
+    "gift-reveal":           { "local": "assets/gift-reveal.mp4",           "remote": "hf_20260706_054642_58167eed-fc97-47f4-b8ff-893ca980da5b.mp4", "res": "1920x1080", "seconds": 8 },
+    "finale":                { "local": "assets/finale.mp4",                "remote": "hf_20260827_163615_301d5343-0635-48b4-bfd4-d379b364aa98.mp4", "res": "1280x720", "seconds": 10, "motion": "ORBIT 360" }
   },
   "posters": {
     "hero":  { "local": "assets/posters/hero.png",  "remote": "hf_20260706_054146_f60cc815-402b-4ab6-87ec-cec6b55b645a.png" },

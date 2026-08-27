@@ -26,7 +26,7 @@ window.AurielleGem = (function () {
 
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
-    camera.position.set(0, 0, 6);
+    camera.position.set(0, 0, 5.4);
 
     // ---- procedural boutique environment ----
     function makeEnv() {
@@ -58,7 +58,8 @@ window.AurielleGem = (function () {
       color: 0xffffff, metalness: 0, roughness: 0.02,
       transmission: 1.0, ior: 2.4, thickness: 0.6,
       envMap: envMap, envMapIntensity: 2.2, clearcoat: 1.0, clearcoatRoughness: 0.05,
-      iridescence: 0.7, iridescenceIOR: 1.4, specularIntensity: 1.0, flatShading: true
+      iridescence: 0.7, iridescenceIOR: 1.4, specularIntensity: 1.0, flatShading: true,
+      attenuationColor: new THREE.Color(0xffffff), attenuationDistance: 3.0
     });
     function accentMat() {
       return new THREE.MeshPhysicalMaterial({
@@ -108,6 +109,7 @@ window.AurielleGem = (function () {
     });
 
     ring.position.y = -0.35;
+    ring.scale.setScalar(1.12);
     scene.add(ring);
 
     // ---- lights ----
@@ -129,6 +131,7 @@ window.AurielleGem = (function () {
     // ---- colour moods for accents / sparkle ----
     var moods = [0xefe0c2, 0x9fc7ea, 0x79b89b, 0xb39ad8, 0xe2a8af, 0x5170b2].map(function (h) { return new THREE.Color(h); });
     var cA = new THREE.Color(), cB = new THREE.Color(), cCur = new THREE.Color();
+    var locked = null; // when set, the stones hold this colour instead of auto-drifting
 
     // ---- interaction: click / touch + drag to rotate ----
     var tRot = { x: -0.32, y: -0.5 }, cRot = { x: -0.32, y: -0.5 };
@@ -174,11 +177,13 @@ window.AurielleGem = (function () {
       cRot.y += (tRot.y - cRot.y) * 0.1;
       ring.rotation.x = cRot.x; ring.rotation.y = cRot.y;
 
-      // colour drift on accents + subtle main sparkle
-      var phase = (t * 0.12) % 1; var seg = phase * moods.length; var idx = Math.floor(seg), fr = seg - idx;
-      cA.copy(moods[idx % moods.length]); cB.copy(moods[(idx + 1) % moods.length]); cCur.copy(cA).lerp(cB, fr);
-      for (var k = 0; k < accents.length; k++) {
-        accents[k].children.forEach(function (m) { if (m.material.attenuationColor) m.material.attenuationColor.copy(cCur); });
+      // colour drift on accents (only when not locked to a chosen colour)
+      if (!locked) {
+        var phase = (t * 0.12) % 1; var seg = phase * moods.length; var idx = Math.floor(seg), fr = seg - idx;
+        cA.copy(moods[idx % moods.length]); cB.copy(moods[(idx + 1) % moods.length]); cCur.copy(cA).lerp(cB, fr);
+        for (var k = 0; k < accents.length; k++) {
+          accents[k].children.forEach(function (m) { if (m.material.attenuationColor) m.material.attenuationColor.copy(cCur); });
+        }
       }
       diamondMat.iridescenceIOR = 1.3 + Math.sin(t * 0.6) * 0.15;
       if (dust) dust.rotation.y = t * 0.02;
@@ -190,8 +195,40 @@ window.AurielleGem = (function () {
     function start() { if (running) return; running = true; t0 = performance.now(); raf = requestAnimationFrame(frame); }
     function stop() { running = false; if (raf) cancelAnimationFrame(raf); }
 
+    // set the signature stone (main solitaire + accents) to a chosen colour,
+    // or pass null to resume the automatic colour drift.
+    function setColor(hex) {
+      if (hex === null || hex === undefined || hex === false) {
+        locked = null;
+        diamondMat.color.set(0xffffff); diamondMat.attenuationColor.set(0xffffff);
+        diamondMat.attenuationDistance = 3.0; diamondMat.emissive.set(0x000000); diamondMat.envMapIntensity = 2.2;
+        for (var j = 0; j < accents.length; j++) {
+          accents[j].children.forEach(function (m) {
+            if (!m.material) return;
+            m.material.color.set(0xffffff); if (m.material.attenuationColor) m.material.attenuationColor.set(0xefe0c2);
+            m.material.emissive.set(0x000000); m.material.envMapIntensity = 2.0;
+          });
+        }
+        if (!running) renderOnce();
+        return;
+      }
+      var c = new THREE.Color(hex);
+      locked = c;
+      // strong, obvious tint: body colour + attenuation + a soft self-glow, and cut the warm env wash
+      diamondMat.color.copy(c); diamondMat.attenuationColor.copy(c); diamondMat.attenuationDistance = 0.5;
+      diamondMat.emissive.copy(c).multiplyScalar(0.22); diamondMat.envMapIntensity = 1.05;
+      for (var k = 0; k < accents.length; k++) {
+        accents[k].children.forEach(function (m) {
+          if (!m.material) return;
+          m.material.color.copy(c); if (m.material.attenuationColor) m.material.attenuationColor.copy(c);
+          m.material.attenuationDistance = 0.35; m.material.emissive.copy(c).multiplyScalar(0.25); m.material.envMapIntensity = 1.0;
+        });
+      }
+      if (!running) renderOnce();
+    }
+
     if (reduced) renderOnce();
-    return { start: start, stop: stop, renderOnce: renderOnce, resize: resize };
+    return { start: start, stop: stop, renderOnce: renderOnce, resize: resize, setColor: setColor };
   }
   return { init: init };
 })();

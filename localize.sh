@@ -24,11 +24,13 @@ echo "▸ Cinematic sequences (1080p)…"
 dl "$BASE/hf_20260706_054637_61033e62-c94b-460a-8144-d0883a867b3c.mp4" assets/hero-spark.mp4
 dl "$BASE/hf_20260706_054640_dd2c15c0-9351-4835-a855-85136937024e.mp4" assets/craftsmanship-detail.mp4
 dl "$BASE/hf_20260706_054642_58167eed-fc97-47f4-b8ff-893ca980da5b.mp4" assets/gift-reveal.mp4
+dl "$BASE/hf_20260827_163615_301d5343-0635-48b4-bfd4-d379b364aa98.mp4" assets/finale.mp4
 
 echo "▸ Posters…"
 dl "$BASE/hf_20260706_054146_f60cc815-402b-4ab6-87ec-cec6b55b645a.png" assets/posters/hero.png
 dl "$BASE/hf_20260706_054149_8172c138-5c40-4982-aac7-70fe5ba90f4a.png" assets/posters/craft.png
 dl "$BASE/hf_20260706_054151_fb9fc71d-e413-43a2-96a2-ff6c2608a2a5.png" assets/posters/gift.png
+dl "$BASE/hf_20260706_054146_f60cc815-402b-4ab6-87ec-cec6b55b645a.png" assets/posters/finale.png
 
 echo "▸ Story image…"
 dl "$BASE/hf_20260706_065348_8fb69b83-715a-40ec-8459-dc0d95694580.png" assets/story/light.png

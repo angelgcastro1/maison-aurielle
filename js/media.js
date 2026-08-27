@@ -25,7 +25,9 @@ window.AURIELLE = (function () {
     "assets/products/earrings.png": B + "hf_20260706_054846_05e11312-023d-4c97-8137-e10df62ac587.png",
     "assets/products/pendant.png":  B + "hf_20260706_054848_083d3e20-ebee-466c-8a3b-0304d80d8893.png",
     "assets/story/light.png":       B + "hf_20260706_065348_8fb69b83-715a-40ec-8459-dc0d95694580.png",
-    "assets/ring/ring.png":         B + "hf_20260706_071121_f35f5d7f-65fb-4ca7-9f0a-d2f31742912e.png"
+    "assets/ring/ring.png":         B + "hf_20260706_071121_f35f5d7f-65fb-4ca7-9f0a-d2f31742912e.png",
+    "assets/finale.mp4":            B + "hf_20260827_163615_301d5343-0635-48b4-bfd4-d379b364aa98.mp4",
+    "assets/posters/finale.png":    B + "hf_20260706_054146_f60cc815-402b-4ab6-87ec-cec6b55b645a.png"
   };
 
   // localize.sh writes js/local-assets.js which sets this true
@@ -59,7 +61,7 @@ window.AURIELLE = (function () {
     img.src = r.primary || "";
   }
 
-  function video(key) { return pick("assets/" + ({ hero:"hero-spark.mp4", craft:"craftsmanship-detail.mp4", gift:"gift-reveal.mp4" }[key])); }
+  function video(key) { return pick("assets/" + ({ hero:"hero-spark.mp4", craft:"craftsmanship-detail.mp4", gift:"gift-reveal.mp4", finale:"finale.mp4" }[key])); }
   function poster(key) { return pick("assets/posters/" + key + ".png"); }
 
   return { REMOTE:REMOTE, USE_LOCAL:USE_LOCAL, catalog:catalog, wireImage:wireImage, video:video, poster:poster, pick:pick };
