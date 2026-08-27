@@ -10,12 +10,13 @@
    ============================================================ */
 window.AURIELLE = (function () {
   var B = "https://d8j0ntlcm91z4.cloudfront.net/user_3E9CPm0AuV3q70Xl4UHu15ShiqX/";
+  var W = "https://d2ol7oe51mr4n9.cloudfront.net/user_3E9CPm0AuV3q70Xl4UHu15ShiqX/"; // web-optimized re-encodes (faststart + dense keyframes)
 
   // local path -> remote CDN url
   var REMOTE = {
-    "assets/hero-spark.mp4":           B + "hf_20260706_054637_61033e62-c94b-460a-8144-d0883a867b3c.mp4",
-    "assets/craftsmanship-detail.mp4": B + "hf_20260706_054640_dd2c15c0-9351-4835-a855-85136937024e.mp4",
-    "assets/gift-reveal.mp4":          B + "hf_20260706_054642_58167eed-fc97-47f4-b8ff-893ca980da5b.mp4",
+    "assets/hero-spark.mp4":           W + "d801240e-1024-4c93-81ba-a9e00d253bff.mp4",
+    "assets/craftsmanship-detail.mp4": W + "d7c8ad6c-f5a2-4250-9707-fd4680803b6a.mp4",
+    "assets/gift-reveal.mp4":          W + "cc13af38-43f1-4d89-a48e-38dce749844f.mp4",
     "assets/posters/hero.png":  B + "hf_20260706_054146_f60cc815-402b-4ab6-87ec-cec6b55b645a.png",
     "assets/posters/craft.png": B + "hf_20260706_054149_8172c138-5c40-4982-aac7-70fe5ba90f4a.png",
     "assets/posters/gift.png":  B + "hf_20260706_054151_fb9fc71d-e413-43a2-96a2-ff6c2608a2a5.png",
@@ -26,7 +27,7 @@ window.AURIELLE = (function () {
     "assets/products/pendant.png":  B + "hf_20260706_054848_083d3e20-ebee-466c-8a3b-0304d80d8893.png",
     "assets/story/light.png":       B + "hf_20260706_065348_8fb69b83-715a-40ec-8459-dc0d95694580.png",
     "assets/ring/ring.png":         B + "hf_20260706_071121_f35f5d7f-65fb-4ca7-9f0a-d2f31742912e.png",
-    "assets/finale.mp4":            B + "hf_20260827_163615_301d5343-0635-48b4-bfd4-d379b364aa98.mp4",
+    "assets/finale.mp4":            W + "4de412ef-67d3-4094-989e-144cee50b5f9.mp4",
     "assets/posters/finale.png":    B + "hf_20260706_054146_f60cc815-402b-4ab6-87ec-cec6b55b645a.png"
   };
 
