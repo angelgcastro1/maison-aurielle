@@ -251,6 +251,12 @@ html.anim .reveal-mask [data-reveal-y]{display:block;transform:translateY(115%)}
   radial-gradient(circle at 50% 45%,rgba(239,224,194,.28),transparent 70%)}
 .gem__fallback img{width:86%;height:86%;object-fit:contain;filter:drop-shadow(0 26px 50px rgba(0,0,0,.6));transition:transform .3s var(--ease-out)}
 .gem__stage.nowebgl .gem__fallback{opacity:1;pointer-events:auto}
+.gem__switch{position:absolute;left:0;right:0;bottom:18px;z-index:3;display:flex;align-items:center;justify-content:center;gap:18px;pointer-events:none}
+.gem__arrow{pointer-events:auto;width:44px;height:44px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;color:var(--cream-dim);background:rgba(10,9,8,.45);backdrop-filter:blur(6px);transition:color .3s,border-color .3s,background .4s,transform .4s var(--ease)}
+.gem__arrow:hover{color:#1a1409;border-color:var(--gold);background:linear-gradient(135deg,var(--gold-2),var(--gold-deep));transform:translateY(-2px)}
+.gem__arrow:focus-visible{outline:none;border-color:var(--gold)}
+.gem__arrow svg{width:18px;height:18px;display:block}
+.gem__name{pointer-events:auto;min-width:15ch;text-align:center;font-family:var(--serif);font-size:1.05rem;color:var(--cream);letter-spacing:.04em;text-shadow:0 2px 12px rgba(0,0,0,.8)}
 
 /* ============================================================
    6 · GIFT (sticky scrubbed video)
