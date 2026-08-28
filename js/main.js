@@ -371,6 +371,21 @@
       io.observe(document.getElementById("gemstone"));
     } else if (!reduced) { gem.start(); }
 
+    // design carousel arrows
+    var nameEl = document.getElementById("gemName");
+    var prevB = document.getElementById("gemPrev"), nextB = document.getElementById("gemNext");
+    function setName(n) {
+      if (!nameEl || !n) return;
+      if (hasGSAP && !reduced) {
+        gsap.to(nameEl, { opacity: 0, y: 6, duration: 0.18, ease: "power2.in", onComplete: function () {
+          nameEl.textContent = n;
+          gsap.to(nameEl, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" });
+        }});
+      } else nameEl.textContent = n;
+    }
+    if (prevB && gem.prev) prevB.addEventListener("click", function () { setName(gem.prev()); });
+    if (nextB && gem.next) nextB.addEventListener("click", function () { setName(gem.next()); });
+
     // colour swatches — click to set the stone, click the active one again to resume drift
     var swatches = document.querySelectorAll("#gemstone .gem__swatches li");
     swatches.forEach(function (li) {
