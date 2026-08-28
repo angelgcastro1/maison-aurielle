@@ -308,16 +308,22 @@ html.anim #hero .reveal-mask.mask-on:nth-of-type(3) [data-reveal-y]{transition-d
 /* ============================================================
    7 · PRIVATE / INVITE
    ============================================================ */
-.private{position:relative;background:linear-gradient(180deg,#0b0a0d,var(--noir));overflow:hidden}
+/* pinned cinematic chapter: film scrubs, card arrives at ~72%, film finishes */
+.private{position:relative;height:300svh;background:linear-gradient(180deg,#0b0a0d,var(--noir))}
+.private__sticky{position:sticky;top:0;height:100svh;min-height:600px;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .private__bg{position:absolute;inset:0;z-index:0;pointer-events:none}
 .private__video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   opacity:0;transition:opacity 2s var(--ease);filter:saturate(1)}
-.private__video.ready{opacity:.62}
+.private__video.ready{opacity:.88}
 /* lighter veil — the invitation card carries its own backdrop for legibility */
 .private__scrim{position:absolute;inset:0;background:
   radial-gradient(120% 100% at 50% 50%,rgba(10,9,8,.3) 0%,rgba(10,9,8,.58) 62%,rgba(10,9,8,.86) 100%),
   linear-gradient(180deg,var(--noir) 0%,transparent 20%,transparent 80%,var(--noir) 100%)}
-.private .wrap{position:relative;z-index:1}
+.private .wrap{position:relative;z-index:1;width:100%}
+/* the invitation waits for the film, then rises in */
+html.anim #private .invite{opacity:0;transform:translateY(44px) scale(.98)}
+html.anim #private .invite{transition:opacity 1.1s var(--ease-out),transform 1.1s var(--ease-out)}
+#private.private--on .invite{opacity:1!important;transform:none!important}
 .invite{position:relative;max-width:960px;margin:0 auto;text-align:center;padding:clamp(48px,7vw,100px) clamp(28px,6vw,90px);
   border:1px solid var(--line);border-radius:5px;overflow:hidden;
   background:linear-gradient(160deg,rgba(28,21,16,.5),rgba(10,9,8,.58));backdrop-filter:blur(14px) saturate(1.1);
@@ -509,6 +515,9 @@ html.anim #hero .reveal-mask.mask-on:nth-of-type(3) [data-reveal-y]{transition-d
   .hero__sticky{position:relative;height:100svh;min-height:auto}
   .finale{height:100svh}
   .finale__sticky{position:relative;height:100svh;min-height:auto}
+  .private{height:auto}
+  .private__sticky{position:relative;height:auto;min-height:auto;padding:clamp(80px,12vh,140px) 0}
+  html.anim #private .invite{opacity:1!important;transform:none!important}
   .hero__video.ready,.gift__video.ready,.finale__video.ready{opacity:.8}
   .craft__points li{position:relative;left:auto;right:auto;opacity:1;transform:none;margin-bottom:26px}
   .craft__points{position:static;padding-top:20px}
