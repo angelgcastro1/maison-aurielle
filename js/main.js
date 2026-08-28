@@ -123,7 +123,7 @@
         var r = sec.getBoundingClientRect(), vh = window.innerHeight;
         if (r.bottom < -vh || r.top > vh * 2) {
           try { el.pause(); el.removeAttribute("src"); el.load(); } catch (e) {}
-          el.classList.remove("ready");
+          concealVideo(el);
           loaded = false;
         }
       }
@@ -154,7 +154,24 @@
       if (p.fallback && img.src.indexOf(p.fallback) === -1) img.src = p.fallback;
     });
     img.src = p.primary;
+    el.__vposter = img;
     el.parentNode.insertBefore(img, el); // behind the video in paint order
+  }
+
+  /* The films settle at 96–97% opacity by design — that softness is what keeps
+     them sitting in the dark rather than glowing off the page. So the still
+     behind them has to be taken away once the video is up, or it reads through
+     the video as a permanent double exposure. These two keep the pair in step:
+     poster out as the film arrives, poster back when the decoder is released. */
+  function revealVideo(el) {
+    if (!el) return;
+    el.classList.add("ready");
+    if (el.__vposter) el.__vposter.classList.add("vposter--out");
+  }
+  function concealVideo(el) {
+    if (!el) return;
+    el.classList.remove("ready");
+    if (el.__vposter) el.__vposter.classList.remove("vposter--out");
   }
 
   function setupVideo(el, key, opt) {
@@ -168,7 +185,7 @@
     el.muted = true; el.loop = !!opt.loop; el.preload = "auto";
     el.addEventListener("loadeddata", function () {
       if (opt.autoplay && !reduced) {
-        el.classList.add("ready");
+        revealVideo(el);
         var pr = el.play(); if (pr && pr.catch) pr.catch(function () {});
       } else {
         try { el.pause(); } catch (e) {}
@@ -176,7 +193,7 @@
         // seeked to the current scroll position — otherwise the poster frame
         // visibly jumps to frame 0 the moment the video appears.
         el.dataset.awaitSync = "1";
-        setTimeout(function () { el.classList.add("ready"); }, 2000); // failsafe
+        setTimeout(function () { revealVideo(el); }, 2000); // failsafe
       }
       if (hasGSAP) ScrollTrigger.refresh();
     });
@@ -410,11 +427,11 @@
         delete vid.dataset.awaitSync;
         vid.addEventListener("seeked", function onSynced() {
           vid.removeEventListener("seeked", onSynced);
-          vid.classList.add("ready");
+          revealVideo(vid);
         });
-        try { vid.currentTime = t0; } catch (e) { vid.classList.add("ready"); }
+        try { vid.currentTime = t0; } catch (e) { revealVideo(vid); }
         // if the decoder never reports the seek, show it anyway
-        setTimeout(function () { vid.classList.add("ready"); }, 400);
+        setTimeout(function () { revealVideo(vid); }, 400);
         continue;
       }
 
