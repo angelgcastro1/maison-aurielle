@@ -33,7 +33,7 @@
       var lenis = initSmooth();
       chrome(lenis);
       if (!reduced) {
-        [reveals, heroIntro, heroScene, storyScene, collectionTray, craftScene, giftScene, privateScene, productReveals, trustReveals, finaleScene, magnetic].forEach(function (fn) {
+        [reveals, heroIntro, heroScene, storyScene, storyHover, collectionTray, craftScene, giftScene, privateScene, productReveals, trustReveals, finaleScene, magnetic].forEach(function (fn) {
           try { fn(); } catch (e) { console.error("[Aurielle scene]", e); }
         });
         window.addEventListener("load", function () { ScrollTrigger.refresh(); });
@@ -415,12 +415,67 @@
 
   /* ---------------- story: editorial image parallax ---------------- */
   function storyScene() {
-    var img = document.querySelector(".story__img");
-    if (!img) return;
-    gsap.fromTo(img, { yPercent: -6 }, {
+    var layers = document.querySelectorAll(".story__figclip .story__media");
+    if (!layers.length) return;
+    gsap.fromTo(layers, { yPercent: -6 }, {
       yPercent: 7, ease: "none",
       scrollTrigger: { trigger: "#story", start: "top bottom", end: "bottom top", scrub: true }
     });
+  }
+
+  /* ---------------- story: the still comes alive on hover ----------------
+     8s of her hand tracing the bracelet, layered over the photograph it was
+     generated from — so the first frame lines up exactly and there is no cut.
+     Desktop: plays on hover. Touch: plays once it settles into view. */
+  function storyHover() {
+    var fig = document.getElementById("storyFig");
+    var vid = document.getElementById("storyVideo");
+    if (!fig || !vid) return;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+
+    var src = window.AURIELLE.pick("assets/story/light.mp4");
+    var loaded = false, offTimer = null;
+
+    function load() {
+      if (loaded) return; loaded = true;
+      vid.addEventListener("error", function onerr() {
+        vid.removeEventListener("error", onerr);
+        if (src.fallback && vid.src.indexOf(src.fallback) === -1) { vid.src = src.fallback; vid.load(); }
+      });
+      vid.src = src.primary; vid.load();
+    }
+    // reveal only once frames are actually on screen — never a black flash
+    vid.addEventListener("playing", function () { vid.classList.add("is-on"); });
+
+    function play() {
+      clearTimeout(offTimer);
+      load();
+      var p = vid.play();
+      if (p && p.catch) p.catch(function () {});
+    }
+    function stop() {
+      vid.classList.remove("is-on");
+      clearTimeout(offTimer);
+      offTimer = setTimeout(function () {   // rewind after the crossfade, not during
+        try { vid.pause(); vid.currentTime = 0; } catch (e) {}
+      }, 780);
+    }
+
+    if (isTouch) {
+      // no hover on a phone — let it run while the figure is comfortably in view
+      var io = new IntersectionObserver(function (ents) {
+        ents.forEach(function (e) { e.isIntersecting ? play() : stop(); });
+      }, { threshold: 0.55 });
+      io.observe(fig);
+    } else {
+      fig.addEventListener("pointerenter", play);
+      fig.addEventListener("pointerleave", stop);
+      // warm the file up as the section approaches so the first hover is instant
+      var pre = new IntersectionObserver(function (ents) {
+        if (ents[0].isIntersecting) { load(); pre.disconnect(); }
+      }, { rootMargin: "600px 0px" });
+      pre.observe(fig);
+    }
   }
 
   /* ---------------- collection tray ---------------- */

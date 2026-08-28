@@ -26,7 +26,8 @@ window.AURIELLE = (function () {
     "assets/products/earrings.png": B + "hf_20260706_054846_05e11312-023d-4c97-8137-e10df62ac587.png",
     "assets/products/pendant.png":  B + "hf_20260706_054848_083d3e20-ebee-466c-8a3b-0304d80d8893.png",
     "assets/products/band.png":     B + "hf_20260828_154030_1eb472f8-96cb-4478-abfa-e82aed90806f.png",
-    "assets/story/light.png":       B + "hf_20260706_065348_8fb69b83-715a-40ec-8459-dc0d95694580.png",
+    "assets/story/light.png":       B + "hf_20260828_145527_c331f88a-e50e-4a55-8195-588d788de8dc.png",
+    "assets/story/light.mp4":       B + "hf_20260828_145724_81422677-6201-4259-b45f-ef79bb1af145.mp4",
     "assets/ring/ring.png":         B + "hf_20260706_071121_f35f5d7f-65fb-4ca7-9f0a-d2f31742912e.png",
     "assets/finale.mp4":            W + "4de412ef-67d3-4094-989e-144cee50b5f9.mp4",
     // private-viewing backdrop — files sit at the repo root, no folder needed
