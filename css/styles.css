@@ -153,8 +153,9 @@ html.anim #hero .reveal-mask.mask-on:nth-of-type(3) [data-reveal-y]{transition-d
 /* ============================================================
    1 · HERO
    ============================================================ */
-/* long pin so the cinematic film plays out fully before the story begins */
-.hero{position:relative;height:420svh;width:100%}
+/* pin length tuned so a short scroll reveals a lot of film (the clip is long,
+   so motion-per-scroll stays high without demanding endless scrolling) */
+.hero{position:relative;height:260svh;width:100%}
 .hero__sticky{position:sticky;top:0;height:100svh;min-height:600px;width:100%;overflow:hidden;display:flex;align-items:flex-start}
 .hero__media{position:absolute;inset:0;z-index:0}
 /* anchored left and widened so the ring sits right of centre, clear of the headline */
