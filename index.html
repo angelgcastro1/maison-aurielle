@@ -190,12 +190,21 @@
           <li style="--s:var(--rose)" data-color="#e2a8af" role="button" tabindex="0" aria-label="Set the stone to rose">Rose</li>
           <li style="--s:var(--sapphire)" data-color="#5170b2" role="button" tabindex="0" aria-label="Set the stone to sapphire">Sapphire</li>
         </ul>
-        <p class="gem__hint" data-reveal><i></i>Click and drag to rotate the ring — swipe on touch.</p>
+        <p class="gem__hint" data-reveal><i></i>Drag in any direction to turn the ring — on touch too.</p>
       </div>
       <div class="gem__stage">
-        <canvas id="gemCanvas" aria-label="Interactive 3D diamond ring you can drag to rotate" role="img"></canvas>
+        <canvas id="gemCanvas" aria-label="Interactive 3D ring — drag to rotate, arrows to change design" role="img"></canvas>
         <div class="gem__fallback" id="gemFallback" aria-hidden="true">
           <img alt="The Aurielle diamond ring" data-local="assets/ring/ring.png" />
+        </div>
+        <div class="gem__switch">
+          <button class="gem__arrow" id="gemPrev" aria-label="Previous ring design">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <span class="gem__name" id="gemName" aria-live="polite">The Aurielle Solitaire</span>
+          <button class="gem__arrow" id="gemNext" aria-label="Next ring design">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
         </div>
       </div>
     </div>
