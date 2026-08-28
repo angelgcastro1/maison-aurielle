@@ -173,12 +173,19 @@ window.AurielleGem = (function () {
     /* ---- carousel state ---- */
     var designs = [buildSolitaire, buildHalo, buildTrilogy];
     var built = [null, null, null];
-    var idx = 0, active = null, switching = false;
+    var idx = 0, active = null, switching = false, mountScale = 1.0;
     function getDesign(i) { if (!built[i]) built[i] = designs[i](); return built[i]; }
+    function fitScale() {
+      // portrait stages (tablet/mobile) get a smaller ring, raised in frame,
+      // so it never collides with the carousel controls
+      var w = stage.clientWidth || 1, h = stage.clientHeight || 1;
+      return (h > w * 0.95) ? 0.88 : 1.0;
+    }
     function mount(i) {
       active = getDesign(i);
-      active.group.position.y = -0.22;
-      active.group.scale.setScalar(1.08);
+      mountScale = fitScale();
+      active.group.position.y = 0.12; // lifted — clears the arrows and name below
+      active.group.scale.setScalar(mountScale);
       scene.add(active.group);
       if (locked) applyColor(locked);
     }
@@ -196,7 +203,7 @@ window.AurielleGem = (function () {
         active.group.rotation.x = cRot.x; active.group.rotation.y = cRot.y - dir * 0.9;
         if (hasGsap) {
           active.group.scale.setScalar(0.02);
-          gsap.to(active.group.scale, { x: 1.08, y: 1.08, z: 1.08, duration: 0.55, ease: "back.out(1.4)" });
+          gsap.to(active.group.scale, { x: mountScale, y: mountScale, z: mountScale, duration: 0.55, ease: "back.out(1.4)" });
           gsap.to(active.group.rotation, { y: cRot.y, duration: 0.55, ease: "power3.out", onComplete: function () { switching = false; } });
         } else { switching = false; renderOnce(); }
       }
@@ -228,15 +235,27 @@ window.AurielleGem = (function () {
     var cA = new THREE.Color(), cB = new THREE.Color(), cCur = new THREE.Color();
     var locked = null;
 
-    function tintStones(color, dist) {
+    var _white = new THREE.Color(0xffffff), _tmp = new THREE.Color();
+    function tintStones(color, vivid) {
       if (!active) return;
       for (var k = 0; k < active.stones.length; k++) {
         active.stones[k].children.forEach(function (m) {
-          if (m.material.attenuationColor) { m.material.attenuationColor.copy(color); if (dist) m.material.attenuationDistance = dist; }
+          var mat = m.material;
+          if (!mat.attenuationColor) return;
+          mat.attenuationColor.copy(color);
+          if (vivid) {
+            mat.attenuationDistance = 0.3;
+            mat.color.copy(_tmp.copy(_white).lerp(color, 0.5));       // body takes the hue
+            if (mat.emissive) mat.emissive.copy(color).multiplyScalar(0.42); // inner glow
+          } else {
+            mat.attenuationDistance = 0.7;
+            mat.color.copy(_white);
+            if (mat.emissive) mat.emissive.setRGB(0, 0, 0);
+          }
         });
       }
     }
-    function applyColor(color) { tintStones(color, 0.5); }
+    function applyColor(color) { tintStones(color, true); }
 
     /* ---- interaction: free drag, mouse AND touch ---- */
     var tRot = { x: -0.30, y: -0.5 }, cRot = { x: -0.30, y: -0.5 };
@@ -262,6 +281,10 @@ window.AurielleGem = (function () {
     function resize() {
       var w = stage.clientWidth, h = stage.clientHeight; if (!w || !h) return;
       renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+      if (active && !switching) {
+        mountScale = fitScale();
+        active.group.scale.setScalar(mountScale);
+      }
     }
     var ro = ("ResizeObserver" in window) ? new ResizeObserver(function () { resize(); renderOnce(); }) : null;
     if (ro) ro.observe(stage); else window.addEventListener("resize", resize);
@@ -301,10 +324,17 @@ window.AurielleGem = (function () {
       if (hex === null || hex === undefined || hex === false) {
         locked = null;
         diamondMat.attenuationColor.set(0xffffff); diamondMat.attenuationDistance = 3.0;
+        diamondMat.color.set(0xffffff);
+        if (diamondMat.emissive) diamondMat.emissive.setRGB(0, 0, 0);
+        tintStones(cCur || _white, false);
         if (!running) renderOnce();
         return;
       }
       locked = new THREE.Color(hex);
+      // main diamonds take the hue strongly so the change reads on every design
+      diamondMat.attenuationColor.copy(locked); diamondMat.attenuationDistance = 0.5;
+      diamondMat.color.copy(_tmp.copy(_white).lerp(locked, 0.45));
+      if (diamondMat.emissive) diamondMat.emissive.copy(locked).multiplyScalar(0.35);
       applyColor(locked);
       if (!running) renderOnce();
     }
