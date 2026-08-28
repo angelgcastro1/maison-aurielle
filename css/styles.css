@@ -41,6 +41,15 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
 canvas{display:block}
 ::selection{background:rgba(200,163,93,.28);color:#fff}
 
+/* ---------- performance: give the compositor clean, isolated layers ----------
+   These hint the browser to keep each pinned scene on its own GPU layer and to
+   skip painting off-screen sections. Video resolution is untouched. */
+.hero__sticky,.craft__sticky,.gift__sticky,.finale__sticky{will-change:transform;transform:translateZ(0)}
+.hero__video,.craft__video,.gift__video,.finale__video,.private__video{
+  backface-visibility:hidden;transform:translateZ(0);contain:paint}
+#story,#collection,#products,#trust,#private{content-visibility:auto;contain-intrinsic-size:1px 900px}
+.piece__img img,.card__media img,.story__img{will-change:transform}
+
 /* Lenis */
 html.lenis,html.lenis body{height:auto}
 .lenis.lenis-smooth{scroll-behavior:auto!important}
@@ -372,7 +381,7 @@ html.anim #hero .reveal-mask.mask-on:nth-of-type(3) [data-reveal-y]{transition-d
 .finale__display{font-family:var(--serif);font-weight:400;line-height:1.02;margin:0 0 .55em;color:var(--cream)}
 .finale__display .reveal-mask{padding-bottom:.06em}
 .finale__display [data-reveal-y]{display:block;font-size:clamp(2.4rem,5.6vw,5rem)}
-.finale__to{font-style:italic;color:var(--cream-dim);font-size:clamp(1.4rem,2.8vw,2.4rem)!important;line-height:1.1}
+.finale__to{font-style:italic;color:var(--cream-dim);font-size:clamp(1.3rem,2.4vw,2.1rem);line-height:1;margin-left:.12em}
 .finale__gold{font-style:italic;background:linear-gradient(120deg,var(--gold-bright),var(--gold),var(--gold-deep));-webkit-background-clip:text;background-clip:text;color:transparent}
 .finale__rule{display:block;width:76px;height:2px;background:linear-gradient(90deg,var(--gold-2),var(--gold-deep));margin:0 0 1.8em}
 .finale__sub{font-family:var(--sans);font-weight:500;font-size:.82rem;letter-spacing:.3em;text-transform:uppercase;color:var(--cream);line-height:2.1;margin:0}
