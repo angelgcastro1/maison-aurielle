@@ -46,17 +46,23 @@ window.AURIELLE = (function () {
   };
   var IS_TOUCH = window.matchMedia && window.matchMedia("(hover:none)").matches;
 
+  // lighter local files for touch devices (used when self-hosted)
+  var MOBILE_LOCAL = {
+    "assets/private-bracelet.mp4": "assets/private-bracelet-m.mp4"
+  };
+
   // localize.sh writes js/local-assets.js which sets this true
   var USE_LOCAL = !!window.AURIELLE_USE_LOCAL;
 
   // returns { primary, fallback } for a given local path
   function pick(localPath) {
     var remote = REMOTE[localPath];
-    // touch devices get the lightweight mobile encode when one exists
+    // touch devices get the lightweight encode when one exists
     if (IS_TOUCH && MOBILE[localPath]) remote = MOBILE[localPath];
+    var local = (IS_TOUCH && MOBILE_LOCAL[localPath]) ? MOBILE_LOCAL[localPath] : localPath;
     return USE_LOCAL
-      ? { primary: localPath, fallback: remote }
-      : { primary: remote || localPath, fallback: localPath };
+      ? { primary: local, fallback: remote }
+      : { primary: remote || localPath, fallback: local };
   }
 
   var catalog = [

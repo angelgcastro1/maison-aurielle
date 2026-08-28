@@ -19,7 +19,8 @@
     "necklace": { "name": "The Luma Necklace",      "local": "assets/products/necklace.png", "remote": "hf_20260706_054843_2714f35b-b925-402a-a1cd-acd0a7115ed9.png" },
     "bracelet": { "name": "The Vale Bracelet",      "local": "assets/products/bracelet.png", "remote": "hf_20260706_054844_a0623321-330e-419b-ba35-c54224ec5351.png" },
     "earrings": { "name": "The Seraphine Earrings", "local": "assets/products/earrings.png", "remote": "hf_20260706_054846_05e11312-023d-4c97-8137-e10df62ac587.png" },
-    "pendant":  { "name": "The Éclat Pendant",      "local": "assets/products/pendant.png",  "remote": "hf_20260706_054848_083d3e20-ebee-466c-8a3b-0304d80d8893.png" }
+    "pendant":  { "name": "The Éclat Pendant",      "local": "assets/products/pendant.png",  "remote": "hf_20260706_054848_083d3e20-ebee-466c-8a3b-0304d80d8893.png" },
+    "band":     { "name": "The Aurore Band",        "local": "assets/products/band.png",     "remote": "hf_20260828_154030_1eb472f8-96cb-4478-abfa-e82aed90806f.png" }
   },
   "story": {
     "light": { "local": "assets/story/light.png", "remote": "hf_20260706_065348_8fb69b83-715a-40ec-8459-dc0d95694580.png" }

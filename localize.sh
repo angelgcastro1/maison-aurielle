@@ -44,6 +44,7 @@ dl "$BASE/hf_20260706_054843_2714f35b-b925-402a-a1cd-acd0a7115ed9.png" assets/pr
 dl "$BASE/hf_20260706_054844_a0623321-330e-419b-ba35-c54224ec5351.png" assets/products/bracelet.png
 dl "$BASE/hf_20260706_054846_05e11312-023d-4c97-8137-e10df62ac587.png" assets/products/earrings.png
 dl "$BASE/hf_20260706_054848_083d3e20-ebee-466c-8a3b-0304d80d8893.png" assets/products/pendant.png
+dl "$BASE/hf_20260828_154030_1eb472f8-96cb-4478-abfa-e82aed90806f.png" assets/products/band.png
 
 echo "▸ Optimizing videos for smooth scroll-scrubbing (faststart + dense keyframes)…"
 if command -v ffmpeg >/dev/null 2>&1; then
