@@ -28,6 +28,8 @@ window.AURIELLE = (function () {
     "assets/story/light.png":       B + "hf_20260706_065348_8fb69b83-715a-40ec-8459-dc0d95694580.png",
     "assets/ring/ring.png":         B + "hf_20260706_071121_f35f5d7f-65fb-4ca7-9f0a-d2f31742912e.png",
     "assets/finale.mp4":            W + "4de412ef-67d3-4094-989e-144cee50b5f9.mp4",
+    "assets/private-bracelet.mp4":  W + "a5fb70e0-43b4-4ee6-a21e-0a243a5b0b6c.mp4",
+    "assets/posters/private.png":   B + "hf_20260828_145527_c331f88a-e50e-4a55-8195-588d788de8dc.png",
     "assets/posters/finale.png":    B + "hf_20260706_054146_f60cc815-402b-4ab6-87ec-cec6b55b645a.png"
   };
 
@@ -37,7 +39,8 @@ window.AURIELLE = (function () {
     "assets/hero-spark.mp4":           W + "1c184008-b1fc-48fd-9ad9-bc5291c4f2bb.mp4",
     "assets/craftsmanship-detail.mp4": W + "909eaf8a-ba78-4eb8-a74d-d2b814eeabe0.mp4",
     "assets/gift-reveal.mp4":          W + "daf1a895-974a-4ada-a414-644e00cf4d19.mp4",
-    "assets/finale.mp4":               W + "6da1570c-8140-4ad7-97e8-1dc5961be598.mp4"
+    "assets/finale.mp4":               W + "6da1570c-8140-4ad7-97e8-1dc5961be598.mp4",
+    "assets/private-bracelet.mp4":     W + "b5206797-1962-4863-8ffc-154a9354ce20.mp4"
   };
   var IS_TOUCH = window.matchMedia && window.matchMedia("(hover:none)").matches;
 
@@ -74,7 +77,7 @@ window.AURIELLE = (function () {
     img.src = r.primary || "";
   }
 
-  function video(key) { return pick("assets/" + ({ hero:"hero-spark.mp4", craft:"craftsmanship-detail.mp4", gift:"gift-reveal.mp4", finale:"finale.mp4" }[key])); }
+  function video(key) { return pick("assets/" + ({ hero:"hero-spark.mp4", craft:"craftsmanship-detail.mp4", gift:"gift-reveal.mp4", finale:"finale.mp4", private:"private-bracelet.mp4" }[key])); }
   function poster(key) { return pick("assets/posters/" + key + ".png"); }
 
   return { REMOTE:REMOTE, USE_LOCAL:USE_LOCAL, catalog:catalog, wireImage:wireImage, video:video, poster:poster, pick:pick };
