@@ -134,9 +134,17 @@
     el.poster = p.primary; // shows immediately while the clip downloads
     el.muted = true; el.loop = !!opt.loop; el.preload = "auto";
     el.addEventListener("loadeddata", function () {
-      el.classList.add("ready");
-      if (opt.autoplay && !reduced) { var pr = el.play(); if (pr && pr.catch) pr.catch(function () {}); }
-      else { try { el.pause(); } catch (e) {} }
+      if (opt.autoplay && !reduced) {
+        el.classList.add("ready");
+        var pr = el.play(); if (pr && pr.catch) pr.catch(function () {});
+      } else {
+        try { el.pause(); } catch (e) {}
+        // Scrubbed clips stay hidden behind their poster until they have been
+        // seeked to the current scroll position — otherwise the poster frame
+        // visibly jumps to frame 0 the moment the video appears.
+        el.dataset.awaitSync = "1";
+        setTimeout(function () { el.classList.add("ready"); }, 2000); // failsafe
+      }
       if (hasGSAP) ScrollTrigger.refresh();
     });
     // Fully download the clip, then play it from memory (a blob URL).
@@ -355,6 +363,20 @@
       // off-screen: stay in sync cheaply, do no seeking
       if (s.st && !s.st.isActive) { s.cur = target; continue; }
       if (!vid.duration || vid.readyState < 1) continue;
+
+      // First frame after load: jump straight to the scroll position and only
+      // then reveal the video, so it fades in on the correct frame.
+      if (vid.dataset.awaitSync === "1") {
+        s.cur = target;
+        var t0 = Math.min(vid.duration - 0.05, Math.max(0, target * vid.duration));
+        try { vid.currentTime = t0; } catch (e) {}
+        delete vid.dataset.awaitSync;
+        vid.addEventListener("seeked", function onSynced() {
+          vid.removeEventListener("seeked", onSynced);
+          vid.classList.add("ready");
+        });
+        continue;
+      }
 
       s.cur += (target - s.cur) * _easeK;
       if (Math.abs(target - s.cur) < 0.0006) s.cur = target;
