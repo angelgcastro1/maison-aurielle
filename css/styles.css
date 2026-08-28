@@ -340,12 +340,18 @@ html.anim #hero .reveal-mask.mask-on:nth-of-type(3) [data-reveal-y]{transition-d
    geometry class, so it lines up exactly; these rules just make it visible and
    keep it inert. Without it the sticky chapters render black while the clip
    loads and while the fade runs. */
-.vposter{opacity:1 !important;pointer-events:none;z-index:0;will-change:auto;
-  transition:opacity .9s var(--ease) .25s !important}
-/* Handed over: the film is up, so the still steps away. The short delay lets
-   the video reach full strength first, so the two never cross-dissolve into
-   each other — and because the films rest at 96–97%, leaving the still behind
-   them would ghost through permanently. */
+/* The still carries the video's own class AND .ready, so it renders at exactly
+   the opacity the film will settle at (.97 hero, .96 craft, 1 private). No
+   opacity of its own — that is the whole point.
+
+   Nothing here transitions. Cross-dissolving the still into the film looks
+   like a good idea and is not: two near-identical images fading over black
+   composite to av + (1-av)*ap, which is BELOW 1 through the whole middle of
+   the fade. Measured on the deployed CSS it bottomed out at 0.673 — the hero
+   visibly darkened by a third and came back, which reads as "the photo loads,
+   then the video takes over". Because the still now IS frame 0 of the film,
+   a hard swap is invisible. */
+.vposter{pointer-events:none;z-index:0;will-change:auto;transition:none !important}
 .vposter.vposter--out{opacity:0 !important}
 /* Broad, many-stop falloff: the centre stays clear and bright and the darkness
    creeps in so gradually that no circular edge is ever visible. */
