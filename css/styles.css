@@ -314,7 +314,7 @@ html.anim #hero .hero__cta[data-reveal]{transition-delay:.58s}
 .private .wrap{position:relative;z-index:1}
 .invite{position:relative;max-width:960px;margin:0 auto;text-align:center;padding:clamp(48px,7vw,100px) clamp(28px,6vw,90px);
   border:1px solid var(--line);border-radius:5px;overflow:hidden;
-  background:linear-gradient(160deg,rgba(28,21,16,.82),rgba(10,9,8,.86));backdrop-filter:blur(10px);
+  background:linear-gradient(160deg,rgba(28,21,16,.5),rgba(10,9,8,.58));backdrop-filter:blur(14px) saturate(1.1);
   box-shadow:0 50px 120px -60px rgba(0,0,0,.9)}
 .invite__edge{position:absolute;inset:0;pointer-events:none;
   background:radial-gradient(80% 120% at 50% -10%,rgba(200,163,93,.16),transparent 60%)}
