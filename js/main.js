@@ -140,7 +140,10 @@
         if (en.isIntersecting) { en.target.classList.add("mask-on"); io.unobserve(en.target); }
       });
     }, { threshold: 0.2 });
-    masks.forEach(function (m) { io.observe(m); });
+    masks.forEach(function (m) {
+      if (m.closest("#hero") && !reduced && hasGSAP) return; // hero is scroll-choreographed
+      io.observe(m);
+    });
   }
 
   /* ---------------- loader ---------------- */
@@ -265,12 +268,8 @@
   }
 
   function heroIntro() {
-    // hero lines rise via maskReveal() + CSS delays; only fade the extras here
-    var tl = gsap.timeline({ delay: 2.1 });
-    var eyebrow = document.querySelector("#hero .eyebrow[data-reveal]");
-    var cta = document.querySelector("#hero .hero__cta[data-reveal]");
-    if (eyebrow) tl.fromTo(eyebrow, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" }, 0);
-    if (cta) tl.fromTo(cta, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" }, 0.9);
+    // The hero block is scroll-choreographed in heroScene(): it stays hidden
+    // until the film reaches its final frame, then reveals via CSS.
   }
 
   /* ---------------- smooth video scrubbing engine ----------------
@@ -278,10 +277,12 @@
      track a smoothed ScrollTrigger progress and ease the video toward
      it on a single rAF loop — the footage glides to the scroll position. */
   var _scrubbers = [], _scrubRunning = false;
-  function smoothScrub(vid, sec) {
+  // endAt: fraction of the section's scroll over which the clip completes
+  // (e.g. 0.72 → the film finishes at 72%, leaving room for what follows)
+  function smoothScrub(vid, sec, endAt) {
     if (!vid || !sec) return null;
     var st = ScrollTrigger.create({ trigger: sec, start: "top top", end: "bottom bottom", scrub: 0.6 });
-    _scrubbers.push({ vid: vid, st: st, cur: 0 });
+    _scrubbers.push({ vid: vid, st: st, cur: 0, endAt: endAt || 1 });
     if (!_scrubRunning) { _scrubRunning = true; requestAnimationFrame(scrubLoop); }
     return st;
   }
@@ -293,7 +294,7 @@
     for (var i = 0; i < _scrubbers.length; i++) {
       var s = _scrubbers[i], vid = s.vid;
       if (vid.duration && vid.readyState >= 1 && !vid.seeking) {
-        var target = s.st.progress || 0;
+        var target = Math.min(1, (s.st.progress || 0) / s.endAt);
         s.cur += (target - s.cur) * _easeK;
         if (Math.abs(target - s.cur) < 0.0006) s.cur = target;
         var tt = Math.min(vid.duration - 0.05, s.cur * vid.duration);
@@ -311,17 +312,20 @@
     var sec = document.getElementById("hero");
     var vid = document.getElementById("heroVideo");
     if (!sec) return;
-    var content = sec.querySelector(".hero__content");
     var cue = sec.querySelector(".hero__scrollcue");
     var dust = sec.querySelector(".hero__dust");
-    smoothScrub(vid, sec);
+    var FILM_END = 0.72;           // the clip finishes here …
+    var TEXT_IN  = 0.70;           // … and the type arrives just as it lands
+    smoothScrub(vid, sec, FILM_END);
     ScrollTrigger.create({
       trigger: sec, start: "top top", end: "bottom bottom", scrub: true,
       onUpdate: function (self) {
         var pr = self.progress;
-        if (cue) cue.style.opacity = pr > 0.03 ? String(Math.max(0, 1 - (pr - 0.03) * 14)) : "1";
-        if (content) content.style.opacity = pr < 0.55 ? "1" : String(Math.max(0, 1 - (pr - 0.55) / 0.33));
-        if (dust) dust.style.opacity = String(Math.max(0.15, 1 - pr));
+        // headline block waits for the film to play out, then rises in
+        sec.classList.toggle("hero--on", pr >= TEXT_IN);
+        // "scroll to enter" fades once the film is underway
+        if (cue) cue.style.opacity = String(Math.max(0, 1 - pr * 3.2));
+        if (dust) dust.style.opacity = String(Math.max(0.25, 1 - pr * 0.7));
       }
     });
   }
