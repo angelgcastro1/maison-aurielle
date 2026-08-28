@@ -521,6 +521,34 @@ html.anim #private .invite{transition:opacity 1.1s var(--ease-out),transform 1.1
 }
 
 /* ============================================================
+   TOUCH DEVICES — same choreography, shorter pins, natural framing
+   Every pinned section keeps its scrub + reveals; they simply need
+   less scrolling, and the footage is not widened (no extra zoom).
+   ============================================================ */
+@media (max-width:1024px){
+  .hero{height:210svh}
+  .craft{height:250vh}
+  .gift{height:220vh}
+  .private{height:220svh}
+  .finale{height:190svh}
+  /* full-bleed at natural scale — the desktop widening would over-zoom here */
+  .hero__video,.craft__video,.gift__video,.finale__video,.private__video{
+    left:0;width:100%;object-position:center}
+}
+@media (max-width:720px){
+  .hero{height:165svh}
+  .craft{height:190vh}
+  .gift{height:170vh}
+  .private{height:175svh}
+  .finale{height:150svh}
+  /* pinned panes track the small viewport exactly */
+  .hero__sticky,.craft__sticky,.gift__sticky,.private__sticky,.finale__sticky{
+    height:100svh;min-height:0}
+  .gift__sticky{padding:5vh 0}
+  .hero__content{padding-top:clamp(88px,13vh,120px)}
+}
+
+/* ============================================================
    REDUCED MOTION
    ============================================================ */
 @media (prefers-reduced-motion:reduce){
