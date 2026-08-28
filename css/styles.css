@@ -354,7 +354,9 @@ html.anim #hero .reveal-mask.mask-on:nth-of-type(3) [data-reveal-y]{transition-d
    ============================================================ */
 .finale{position:relative;height:260svh;background:radial-gradient(circle at 50% 55%,#161009,var(--noir) 62%)}
 .finale__sticky{position:sticky;top:0;height:100svh;min-height:600px;overflow:hidden}
-.finale__video{position:absolute;top:0;height:100%;left:-4%;width:108%;object-fit:cover;opacity:0;transition:opacity 1.4s var(--ease);will-change:transform}
+/* widened and anchored left so the ring sits right of centre, clear of the callout */
+.finale__video{position:absolute;top:0;height:100%;left:0;width:126%;object-fit:cover;opacity:0;transition:opacity 1.4s var(--ease);will-change:transform}
+@media (max-width:720px){.finale__video{left:-4%;width:108%}}
 .finale__video.ready{opacity:.96}
 .finale__dust{position:absolute;inset:0;z-index:2}
 .finale__scrim{position:absolute;inset:0;z-index:1;background:
