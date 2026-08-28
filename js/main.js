@@ -110,6 +110,9 @@
       return;
     }
     var loaded = false;
+    // Backdrop goes up straight away — never wait for the clip to decide the
+    // section isn't black.
+    posterBackdrop(el, AURIELLE.poster(key));
     var io = new IntersectionObserver(function (entries) {
       var vis = entries[0].isIntersecting;
       if (vis && !loaded) {
@@ -124,14 +127,44 @@
           loaded = false;
         }
       }
-    }, { rootMargin: "900px 0px" });
+      // These chapters are sticky: the film is already on screen for a full
+      // viewport before the section's top reaches the top. Start fetching well
+      // ahead of that so it has decodable frames by the time it is seen.
+    }, { rootMargin: "1600px 0px" });
     io.observe(sec);
+  }
+
+  /* The poster, painted on the video's parent layer so it is visible from the
+     moment the section scrolls in — through loading, through the fade, and
+     after the decoder is released on phones. The video sits on top of it and
+     matches it frame-for-frame, so the handover is invisible. */
+  function posterBackdrop(el, p) {
+    if (!el || !el.parentNode || !p || !p.primary) return;
+    if (el.dataset.posterSet === "1") return;
+    el.dataset.posterSet = "1";
+    // Carries the video's own class, so it picks up the identical position,
+    // width, object-fit and colour filter from the stylesheet — the video
+    // then fades in directly on top of a pixel-matched still.
+    var img = document.createElement("img");
+    img.className = el.className.replace(/\bready\b/g, "") + " vposter";
+    img.alt = "";
+    img.setAttribute("aria-hidden", "true");
+    img.addEventListener("error", function onerr() {
+      img.removeEventListener("error", onerr);
+      if (p.fallback && img.src.indexOf(p.fallback) === -1) img.src = p.fallback;
+    });
+    img.src = p.primary;
+    el.parentNode.insertBefore(img, el); // behind the video in paint order
   }
 
   function setupVideo(el, key, opt) {
     if (!el) return;
     var v = AURIELLE.video(key), p = AURIELLE.poster(key);
     el.poster = p.primary; // shows immediately while the clip downloads
+    // Paint the poster onto the layer *behind* the video as well. The video
+    // itself starts at opacity 0, so without this the section is plain black
+    // for however long the clip takes to produce a decodable frame.
+    posterBackdrop(el, p);
     el.muted = true; el.loop = !!opt.loop; el.preload = "auto";
     el.addEventListener("loadeddata", function () {
       if (opt.autoplay && !reduced) {
@@ -360,23 +393,33 @@
       var s = _scrubbers[i], vid = s.vid;
       var target = Math.min(1, ((s.st && s.st.progress) || 0) / s.endAt);
 
-      // off-screen: stay in sync cheaply, do no seeking
-      if (s.st && !s.st.isActive) { s.cur = target; continue; }
-      if (!vid.duration || vid.readyState < 1) continue;
+      if (!vid.duration || vid.readyState < 1) {
+        if (s.st && !s.st.isActive) s.cur = target;
+        continue;
+      }
 
       // First frame after load: jump straight to the scroll position and only
       // then reveal the video, so it fades in on the correct frame.
+      // NOTE: this must run BEFORE the isActive gate below. These sections are
+      // sticky, so the film is on screen for a full viewport of scrolling
+      // before the trigger's "top top" start fires. Gating the reveal on
+      // isActive left the section black until you scrolled past it.
       if (vid.dataset.awaitSync === "1") {
         s.cur = target;
         var t0 = Math.min(vid.duration - 0.05, Math.max(0, target * vid.duration));
-        try { vid.currentTime = t0; } catch (e) {}
         delete vid.dataset.awaitSync;
         vid.addEventListener("seeked", function onSynced() {
           vid.removeEventListener("seeked", onSynced);
           vid.classList.add("ready");
         });
+        try { vid.currentTime = t0; } catch (e) { vid.classList.add("ready"); }
+        // if the decoder never reports the seek, show it anyway
+        setTimeout(function () { vid.classList.add("ready"); }, 400);
         continue;
       }
+
+      // off-screen: stay in sync cheaply, do no seeking
+      if (s.st && !s.st.isActive) { s.cur = target; continue; }
 
       s.cur += (target - s.cur) * _easeK;
       if (Math.abs(target - s.cur) < 0.0006) s.cur = target;
