@@ -26,6 +26,7 @@
     wireMedia();
     buildProducts();
     hideLoader();
+    maskReveal();
 
     if (hasGSAP) {
       gsap.registerPlugin(ScrollTrigger);
@@ -99,6 +100,23 @@
     } else {
       blobLoad(v.primary, v.fallback);
     }
+  }
+
+  /* ---------------- masked-line reveal (deterministic) ----------------
+     Adds .mask-on to each .reveal-mask when it enters the viewport; the
+     motion itself is pure CSS, so no animation library can strand a line. */
+  function maskReveal() {
+    var masks = document.querySelectorAll(".reveal-mask");
+    if (!("IntersectionObserver" in window)) {
+      masks.forEach(function (m) { m.classList.add("mask-on"); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add("mask-on"); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.2 });
+    masks.forEach(function (m) { io.observe(m); });
   }
 
   /* ---------------- loader ---------------- */
@@ -185,14 +203,7 @@
         scrollTrigger: { trigger: el, start: "top 86%" }
       });
     });
-    gsap.utils.toArray(".reveal-mask").forEach(function (mask) {
-      if (mask.closest("#hero") || mask.closest("#gift") || mask.closest("#finale")) return;
-      var inner = mask.querySelector("[data-reveal-y]"); if (!inner) return;
-      gsap.fromTo(inner, { yPercent: 118 }, {
-        yPercent: 0, duration: 1.15, ease: "power4.out",
-        scrollTrigger: { trigger: mask, start: "top 90%" }
-      });
-    });
+    // masked lines are handled by maskReveal() + CSS — no tweens here
     gsap.utils.toArray("[data-reveal-card]").forEach(function (el) {
       gsap.fromTo(el, { opacity: 0, y: 42, scale: 0.985 }, {
         opacity: 1, y: 0, scale: 1, duration: 1.2, ease: "power3.out",
@@ -230,13 +241,12 @@
   }
 
   function heroIntro() {
+    // hero lines rise via maskReveal() + CSS delays; only fade the extras here
     var tl = gsap.timeline({ delay: 2.1 });
-    var lines = document.querySelectorAll("#hero .reveal-mask [data-reveal-y]");
     var eyebrow = document.querySelector("#hero .eyebrow[data-reveal]");
     var cta = document.querySelector("#hero .hero__cta[data-reveal]");
     if (eyebrow) tl.fromTo(eyebrow, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" }, 0);
-    if (lines.length) tl.fromTo(lines, { yPercent: 120 }, { yPercent: 0, duration: 1.3, ease: "power4.out", stagger: 0.12 }, 0.15);
-    if (cta) tl.fromTo(cta, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" }, 0.7);
+    if (cta) tl.fromTo(cta, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" }, 0.9);
   }
 
   /* ---------------- smooth video scrubbing engine ----------------
@@ -351,11 +361,9 @@
     var vid = document.getElementById("giftVideo");
     if (!sec) return;
     smoothScrub(vid, sec);
-    var lines = sec.querySelectorAll(".reveal-mask [data-reveal-y]");
     var others = sec.querySelectorAll(".eyebrow[data-reveal], .gift__p[data-reveal], .btn");
-    var tl = gsap.timeline({ scrollTrigger: { trigger: sec, start: "top 55%" } });
-    if (lines.length) tl.fromTo(lines, { yPercent: 120 }, { yPercent: 0, duration: 1.2, ease: "power4.out", stagger: 0.1 }, 0);
-    if (others.length) tl.fromTo(others, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out", stagger: 0.08 }, 0.5);
+    if (others.length) gsap.fromTo(others, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out", stagger: 0.08,
+      scrollTrigger: { trigger: sec, start: "top 55%" } });
   }
 
   /* ---------------- gemstone (Three.js) ---------------- */
@@ -451,8 +459,7 @@
   function finaleScene() {
     var sec = document.getElementById("finale");
     var vid = document.getElementById("finaleVideo");
-    var title = document.querySelectorAll("#finale .reveal-mask [data-reveal-y]");
-    var cta = document.querySelector("#finale .btn");
+    var cta = document.querySelector("#finale .btn"); // display lines: maskReveal() + CSS
     smoothScrub(vid, sec);
     if (vid && !reduced) {
       gsap.fromTo(vid, { scale: 1 }, {
@@ -460,9 +467,8 @@
         scrollTrigger: { trigger: sec, start: "top top", end: "bottom bottom", scrub: 0.6 }
       });
     }
-    var tl = gsap.timeline({ scrollTrigger: { trigger: "#finale", start: "top 55%" } });
-    if (title.length) tl.fromTo(title, { yPercent: 120 }, { yPercent: 0, duration: 1.3, ease: "power4.out", stagger: 0.14 }, 0);
-    if (cta) tl.fromTo(cta, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" }, 0.8);
+    if (cta) gsap.fromTo(cta, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out",
+      scrollTrigger: { trigger: "#finale", start: "top 55%" } });
   }
 
   /* ---------------- magnetic buttons ---------------- */
