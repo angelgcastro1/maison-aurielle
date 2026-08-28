@@ -521,13 +521,12 @@ html.anim #private .invite{transition:opacity 1.1s var(--ease-out),transform 1.1
   .invite__ctas .btn{width:100%}
   .section__head--split{flex-direction:column;align-items:flex-start}
 }
-/* Portrait touch screens: show the WHOLE 16:9 frame instead of a magnified
-   centre crop. It sits as a cinematic band on the black field — the subject
-   reads at natural size rather than blown up. */
+/* Portrait touch screens: fill the whole window, full-bleed, at natural scale
+   (no desktop widening — that was what made it feel over-zoomed). */
 @media (max-width:1024px) and (orientation:portrait){
   .hero__video,.craft__video,.gift__video,.finale__video,.private__video{
-    object-fit:contain;object-position:center center;
-    left:0;width:100%;height:100%}
+    position:absolute;top:0;left:0;width:100%;height:100%;
+    object-fit:cover;object-position:center center}
 }
 
 /* ============================================================
