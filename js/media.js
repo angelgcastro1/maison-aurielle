@@ -38,7 +38,7 @@ window.AURIELLE = (function () {
     "assets/finale.mp4":            B + "hf_20260828_165116_e8f19eaf-8208-49fe-a24b-295ac3225a75.mp4",
     // private-viewing backdrop — files sit at the repo root, no folder needed
     "assets/private-bracelet.mp4":  "private-viewing.mp4",
-    "assets/posters/private.png":   "private-poster.jpg",
+    "assets/posters/private.jpg":   "private-poster.jpg",
     "assets/posters/finale.jpg":    B + "hf_20260828_164737_f754623a-61b1-4115-bc81-bd6a30a8da78.png"
   };
 
@@ -94,11 +94,8 @@ window.AURIELLE = (function () {
   }
 
   function video(key) { return pick("assets/" + ({ hero:"hero-spark.mp4", craft:"craftsmanship-detail.mp4", gift:"gift-reveal.mp4", finale:"finale.mp4", private:"private-bracelet.mp4" }[key])); }
-  // private keeps its own .jpg still; the rest are frame-0 cuts
-  function poster(key) {
-    if (key === "private") return pick("assets/posters/private.png");
-    return pick("assets/posters/" + key + ".jpg");
-  }
+  // every poster is now a frame-0 cut of the clip it sits in front of
+  function poster(key) { return pick("assets/posters/" + key + ".jpg"); }
 
   return { REMOTE:REMOTE, USE_LOCAL:USE_LOCAL, catalog:catalog, wireImage:wireImage, video:video, poster:poster, pick:pick };
 })();
