@@ -56,10 +56,21 @@
     // all static images with data-local
     document.querySelectorAll("img[data-local]").forEach(function (img) { AURIELLE.wireImage(img); });
     // cinematic videos
+    // Hero loads immediately; the rest load in sequence so they're fully
+    // buffered before you reach them, without competing for bandwidth.
     setupVideo(document.getElementById("heroVideo"), "hero", { loop: false, autoplay: false });
-    setupVideo(document.getElementById("craftVideo"), "craft", { loop: false, autoplay: false });
-    setupVideo(document.getElementById("giftVideo"), "gift", { loop: false, autoplay: false });
-    setupVideo(document.getElementById("finaleVideo"), "finale", { loop: false, autoplay: false });
+    var queue = [["craftVideo", "craft"], ["giftVideo", "gift"], ["finaleVideo", "finale"]];
+    (function next() {
+      var item = queue.shift();
+      if (!item) return;
+      var el = document.getElementById(item[0]);
+      if (el) {
+        el.addEventListener("loadeddata", function () { setTimeout(next, 60); }, { once: true });
+        el.addEventListener("error", function () { setTimeout(next, 60); }, { once: true });
+        setupVideo(el, item[1], { loop: false, autoplay: false });
+        setTimeout(next, 4000); // never stall the queue on a slow clip
+      } else next();
+    })();
     ambientBg(); // subtle looping backdrop for the private-viewing section
   }
 
@@ -171,10 +182,18 @@
   /* ---------------- smooth scroll ---------------- */
   function initSmooth() {
     if (reduced || typeof Lenis === "undefined") return null;
-    var lenis = new Lenis({ lerp: 0.085, wheelMultiplier: 1, smoothWheel: true, smoothTouch: false });
+    var lenis = new Lenis({
+      lerp: 0.1,               // slightly quicker settle = less "swimmy" feel
+      wheelMultiplier: 1,
+      smoothWheel: true,
+      smoothTouch: false,      // native momentum on touch is smoother
+      syncTouch: false
+    });
     lenis.on("scroll", ScrollTrigger.update);
     gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
     gsap.ticker.lagSmoothing(0);
+    // one shared ticker for scroll + animation avoids competing rAF loops
+    ScrollTrigger.config({ ignoreMobileResize: true });
     window.__lenis = lenis;
     // anchor links
     document.querySelectorAll('a[href^="#"]').forEach(function (a) {
@@ -294,6 +313,8 @@
   function scrubLoop() {
     for (var i = 0; i < _scrubbers.length; i++) {
       var s = _scrubbers[i], vid = s.vid;
+      // skip work for clips that are off-screen — keeps the main thread free
+      if (s.st && s.st.progress <= 0.001 && !s.st.isActive) continue;
       if (vid.duration && vid.readyState >= 1 && !vid.seeking) {
         var target = Math.min(1, (s.st.progress || 0) / s.endAt);
         s.cur += (target - s.cur) * _easeK;
