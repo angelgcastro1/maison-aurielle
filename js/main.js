@@ -323,22 +323,28 @@
   }
   // On touch devices seeks are costly, so ease faster and only seek when
   // the video has caught up with the previous seek (no queue pile-up).
-  var _seekMin = isTouch ? 0.045 : 0.006;
+  var _seekMin = isTouch ? 0.03 : 0.006;
   var _easeK = isTouch ? 0.26 : 0.22; // catch up faster so motion tracks the scroll
-  function scrubLoop() {
+  var _stallMs = 260;                 // if a seek hasn't completed by now, retry
+  function scrubLoop(now) {
+    now = now || performance.now();
     for (var i = 0; i < _scrubbers.length; i++) {
       var s = _scrubbers[i], vid = s.vid;
-      // skip work for clips that are off-screen — keeps the main thread free
-      if (s.st && s.st.progress <= 0.001 && !s.st.isActive) continue;
-      if (vid.duration && vid.readyState >= 1 && !vid.seeking) {
-        var target = Math.min(1, (s.st.progress || 0) / s.endAt);
-        s.cur += (target - s.cur) * _easeK;
-        if (Math.abs(target - s.cur) < 0.0006) s.cur = target;
-        var tt = Math.min(vid.duration - 0.05, s.cur * vid.duration);
-        if (Math.abs(vid.currentTime - tt) > _seekMin) {
-          if (vid.fastSeek && isTouch) { try { vid.fastSeek(tt); } catch (e) { try { vid.currentTime = tt; } catch (e2) {} } }
-          else { try { vid.currentTime = tt; } catch (e) {} }
-        }
+      var target = Math.min(1, ((s.st && s.st.progress) || 0) / s.endAt);
+
+      // off-screen: stay in sync cheaply, do no seeking
+      if (s.st && !s.st.isActive) { s.cur = target; continue; }
+      if (!vid.duration || vid.readyState < 1) continue;
+
+      s.cur += (target - s.cur) * _easeK;
+      if (Math.abs(target - s.cur) < 0.0006) s.cur = target;
+      var tt = Math.min(vid.duration - 0.05, Math.max(0, s.cur * vid.duration));
+
+      // A seek that never reports back (common on mobile decoders) used to
+      // freeze the scrub forever. Retry once it has clearly stalled.
+      var stalled = vid.seeking && (now - (s.seekAt || 0) > _stallMs);
+      if (Math.abs(vid.currentTime - tt) > _seekMin && (!vid.seeking || stalled)) {
+        try { vid.currentTime = tt; s.seekAt = now; } catch (e) {}
       }
     }
     requestAnimationFrame(scrubLoop);
