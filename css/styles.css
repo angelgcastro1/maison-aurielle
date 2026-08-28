@@ -340,8 +340,13 @@ html.anim #hero .reveal-mask.mask-on:nth-of-type(3) [data-reveal-y]{transition-d
    geometry class, so it lines up exactly; these rules just make it visible and
    keep it inert. Without it the sticky chapters render black while the clip
    loads and while the fade runs. */
-.vposter{opacity:1 !important;transition:none !important;pointer-events:none;
-  z-index:0;will-change:auto}
+.vposter{opacity:1 !important;pointer-events:none;z-index:0;will-change:auto;
+  transition:opacity .9s var(--ease) .25s !important}
+/* Handed over: the film is up, so the still steps away. The short delay lets
+   the video reach full strength first, so the two never cross-dissolve into
+   each other — and because the films rest at 96–97%, leaving the still behind
+   them would ghost through permanently. */
+.vposter.vposter--out{opacity:0 !important}
 /* Broad, many-stop falloff: the centre stays clear and bright and the darkness
    creeps in so gradually that no circular edge is ever visible. */
 .private__scrim{position:absolute;inset:0;background:
