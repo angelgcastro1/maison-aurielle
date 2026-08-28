@@ -49,7 +49,7 @@ html.lenis,html.lenis body{height:auto}
 /* ---------- Typography helpers ---------- */
 .display{font-family:var(--serif);font-weight:400;line-height:1.02;letter-spacing:-.005em;color:var(--cream);margin:0}
 .display em{font-style:italic;color:var(--gold-2)}
-.display--xl{font-size:clamp(2.8rem,8vw,7rem)}
+.display--xl{font-size:clamp(2.3rem,5.6vw,5rem)}
 .display--lg{font-size:clamp(2.2rem,5.2vw,4.6rem)}
 .eyebrow{font-family:var(--sans);font-weight:500;font-size:.72rem;letter-spacing:.42em;
   text-transform:uppercase;color:var(--gold);margin:0 0 1.4em}
@@ -156,7 +156,7 @@ html.anim #hero .reveal-mask.mask-on:nth-of-type(3) [data-reveal-y]{transition-d
 .hero__content{position:relative;z-index:3;width:100%;max-width:var(--maxw);margin:0 auto;
   padding:0 var(--pad) clamp(70px,13vh,150px)}
 .hero__title{font-family:var(--serif);font-weight:400;color:var(--cream);
-  font-size:clamp(2.6rem,7.4vw,6.6rem);line-height:1.03;letter-spacing:-.01em;margin:.2em 0 .7em;max-width:16ch}
+  font-size:clamp(2.2rem,5.2vw,4.6rem);line-height:1.06;letter-spacing:-.01em;margin:.2em 0 .7em;max-width:min(100%,15em)}
 .hero__title em{font-style:italic;color:var(--gold-bright)}
 .hero__title .reveal-mask{padding-bottom:.04em}
 .hero__scrollcue{position:absolute;left:var(--pad);bottom:34px;z-index:3;display:flex;align-items:center;gap:1em;
@@ -353,8 +353,8 @@ html.anim #hero .reveal-mask.mask-on:nth-of-type(3) [data-reveal-y]{transition-d
 .finale__eyebrow{font-family:var(--sans);font-weight:500;font-size:.78rem;letter-spacing:.34em;text-transform:uppercase;color:var(--cream-dim);line-height:2;margin:0 0 1.6em}
 .finale__display{font-family:var(--serif);font-weight:400;line-height:1.02;margin:0 0 .55em;color:var(--cream)}
 .finale__display .reveal-mask{padding-bottom:.06em}
-.finale__display [data-reveal-y]{display:block;font-size:clamp(3rem,7.5vw,6.4rem)}
-.finale__to{font-style:italic;color:var(--cream-dim);font-size:clamp(1.7rem,3.6vw,3rem)!important;line-height:1.1}
+.finale__display [data-reveal-y]{display:block;font-size:clamp(2.4rem,5.6vw,5rem)}
+.finale__to{font-style:italic;color:var(--cream-dim);font-size:clamp(1.4rem,2.8vw,2.4rem)!important;line-height:1.1}
 .finale__gold{font-style:italic;background:linear-gradient(120deg,var(--gold-bright),var(--gold),var(--gold-deep));-webkit-background-clip:text;background-clip:text;color:transparent}
 .finale__rule{display:block;width:76px;height:2px;background:linear-gradient(90deg,var(--gold-2),var(--gold-deep));margin:0 0 1.8em}
 .finale__sub{font-family:var(--sans);font-weight:500;font-size:.82rem;letter-spacing:.3em;text-transform:uppercase;color:var(--cream);line-height:2.1;margin:0}
