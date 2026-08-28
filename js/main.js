@@ -357,9 +357,10 @@
       trigger: sec, start: "top top", end: "bottom bottom", scrub: true,
       onUpdate: function (self) {
         var pr = self.progress;
-        if (cue) cue.style.opacity = pr > 0.03 ? String(Math.max(0, 1 - (pr - 0.03) * 14)) : "1";
-        if (content) content.style.opacity = pr < 0.55 ? "1" : String(Math.max(0, 1 - (pr - 0.55) / 0.33));
-        if (dust) dust.style.opacity = String(Math.max(0.15, 1 - pr));
+        if (cue) cue.style.opacity = pr > 0.02 ? String(Math.max(0, 1 - (pr - 0.02) * 20)) : "1";
+        // copy holds through most of the film, then eases out near the end
+        if (content) content.style.opacity = pr < 0.78 ? "1" : String(Math.max(0, 1 - (pr - 0.78) / 0.18));
+        if (dust) dust.style.opacity = String(Math.max(0.15, 1 - pr * 0.8));
       }
     });
   }
