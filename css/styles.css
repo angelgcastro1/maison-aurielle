@@ -351,7 +351,15 @@ html.anim #hero .reveal-mask.mask-on:nth-of-type(3) [data-reveal-y]{transition-d
    visibly darkened by a third and came back, which reads as "the photo loads,
    then the video takes over". Because the still now IS frame 0 of the film,
    a hard swap is invisible. */
-.vposter{pointer-events:none;z-index:0;will-change:auto;transition:none !important}
+/* max-width:none is load-bearing. The still is an <img>, so the global
+   img{max-width:100%} on line 38 clamps it — while the <video> beside it is
+   untouched and paints at its real width. The films are deliberately wider
+   than their container (hero 124%, craft/gift 108%, finale 126%), so the
+   still rendered ~1051px against the hero's 1303px: a 252px jump in scale
+   the moment the film took over. Private sits at 100%, which is exactly why
+   it was the one section that never misbehaved. */
+.vposter{max-width:none !important;pointer-events:none;z-index:0;will-change:auto;
+  transition:none !important}
 .vposter.vposter--out{opacity:0 !important}
 /* Broad, many-stop falloff: the centre stays clear and bright and the darkness
    creeps in so gradually that no circular edge is ever visible. */
