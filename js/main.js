@@ -51,51 +51,32 @@
     window.__aurielleReady = true;
   }
 
+  /* private-viewing media is handled by lazyVideo(); this keeps the
+     reduced-motion still frame behaviour only. */
+  function ambientBg() {
+    var el = document.getElementById("privateVideo");
+    if (!el || !reduced) return;
+    var p = AURIELLE.poster("private");
+    if (p && p.primary) { el.poster = p.primary; el.classList.add("ready"); }
+  }
+
   /* ---------------- media wiring (local -> remote) ---------------- */
   function wireMedia() {
     // all static images with data-local
     document.querySelectorAll("img[data-local]").forEach(function (img) { AURIELLE.wireImage(img); });
     // cinematic videos
-    // Hero loads immediately; the rest load in sequence so they're fully
-    // buffered before you reach them, without competing for bandwidth.
+    // Hero loads immediately (it's on screen). Every other clip loads as its
+    // section approaches and is RELEASED again once far away. Phones cap how
+    // many videos can be decoded at once — holding all five open made the last
+    // one silently fail to play.
     setupVideo(document.getElementById("heroVideo"), "hero", { loop: false, autoplay: false });
-    var queue = [["craftVideo", "craft"], ["giftVideo", "gift"], ["finaleVideo", "finale"]];
-    (function next() {
-      var item = queue.shift();
-      if (!item) return;
-      var el = document.getElementById(item[0]);
-      if (el) {
-        el.addEventListener("loadeddata", function () { setTimeout(next, 60); }, { once: true });
-        el.addEventListener("error", function () { setTimeout(next, 60); }, { once: true });
-        setupVideo(el, item[1], { loop: false, autoplay: false });
-        setTimeout(next, 4000); // never stall the queue on a slow clip
-      } else next();
-    })();
+    lazyVideo("craftVideo", "craft", "#craft");
+    lazyVideo("giftVideo", "gift", "#gift");
+    lazyVideo("privateVideo", "private", "#private");
+    lazyVideo("finaleVideo", "finale", "#finale");
     ambientBg(); // subtle looping backdrop for the private-viewing section
   }
 
-  /* private-viewing film — loads as the section approaches, then scrubs */
-  function ambientBg() {
-    var el = document.getElementById("privateVideo");
-    var sec = document.getElementById("private");
-    if (!el || !sec) return;
-    if (reduced) { // still frame for reduced-motion users
-      var p = AURIELLE.poster("private");
-      if (p && p.primary) { el.poster = p.primary; el.classList.add("ready"); }
-      return;
-    }
-    var started = false;
-    function begin() {
-      if (started) return; started = true;
-      setupVideo(el, "private", { loop: false, autoplay: false });
-    }
-    if ("IntersectionObserver" in window) {
-      var io = new IntersectionObserver(function (en) {
-        if (en[0].isIntersecting) { begin(); io.disconnect(); }
-      }, { rootMargin: "800px" }); // buffer well ahead so it's ready on arrival
-      io.observe(sec);
-    } else { begin(); }
-  }
 
   /* ---------------- private viewing: scrubbed film + card reveal ---------------- */
   function privateScene() {
@@ -110,6 +91,41 @@
         sec.classList.toggle("private--on", self.progress >= CARD_IN);
       }
     });
+  }
+
+  /* Load a clip when its section nears the viewport; on touch devices, free
+     the decoder again once it is well out of range. This keeps at most one or
+     two videos live at a time, which is what phones can actually handle. */
+  function lazyVideo(id, key, sectionSel) {
+    var el = document.getElementById(id);
+    var sec = document.querySelector(sectionSel);
+    if (!el || !sec) return;
+    if (reduced) { // still frame only
+      var p = AURIELLE.poster(key === "private" ? "private" : key);
+      if (p && p.primary) { el.poster = p.primary; el.classList.add("ready"); }
+      return;
+    }
+    if (!("IntersectionObserver" in window)) {
+      setupVideo(el, key, { loop: false, autoplay: false });
+      return;
+    }
+    var loaded = false;
+    var io = new IntersectionObserver(function (entries) {
+      var vis = entries[0].isIntersecting;
+      if (vis && !loaded) {
+        loaded = true;
+        setupVideo(el, key, { loop: false, autoplay: false });
+      } else if (!vis && loaded && isTouch) {
+        // only release when genuinely far away (avoids load/unload thrash)
+        var r = sec.getBoundingClientRect(), vh = window.innerHeight;
+        if (r.bottom < -vh || r.top > vh * 2) {
+          try { el.pause(); el.removeAttribute("src"); el.load(); } catch (e) {}
+          el.classList.remove("ready");
+          loaded = false;
+        }
+      }
+    }, { rootMargin: "900px 0px" });
+    io.observe(sec);
   }
 
   function setupVideo(el, key, opt) {
@@ -139,8 +155,12 @@
         else { el.src = v.primary; el.load(); } // last resort: stream
       });
     }
-    if (window.location.protocol === "file:") {
-      // fetch() can't read local files — stream directly (fast from disk)
+    // Stream directly when the files are our own (they're faststart-encoded, so
+    // they seek instantly) — this avoids holding whole videos in memory, which
+    // phones can't afford. The blob path remains only for the CDN fallback,
+    // whose files aren't seekable when streamed.
+    var selfHosted = !!(window.AURIELLE && AURIELLE.USE_LOCAL);
+    if (window.location.protocol === "file:" || selfHosted || isTouch) {
       var triedFallback = false;
       el.addEventListener("error", function () {
         if (triedFallback || !v.fallback) return;
