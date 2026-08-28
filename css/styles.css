@@ -334,6 +334,15 @@ html.anim .reveal-mask [data-reveal-y]{display:block;transform:translateY(115%)}
   radial-gradient(94% 108% at 48% 50%,transparent 16%,rgba(8,7,6,.08) 44%,rgba(8,7,6,.34) 70%,rgba(8,7,6,.7) 88%,rgba(8,7,6,.86) 100%),
   linear-gradient(180deg,rgba(8,7,6,.72) 0%,transparent 26%,transparent 66%,rgba(8,7,6,.88) 100%)}
 .finale__content{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:space-between;align-items:center;text-align:center;padding:clamp(56px,11vh,130px) var(--pad)}
+.finale__callout{align-self:flex-start;text-align:left;max-width:34ch;margin-top:clamp(0px,2vh,30px)}
+.finale__eyebrow{font-family:var(--sans);font-weight:500;font-size:.78rem;letter-spacing:.34em;text-transform:uppercase;color:var(--cream-dim);line-height:2;margin:0 0 1.6em}
+.finale__display{font-family:var(--serif);font-weight:400;line-height:1.02;margin:0 0 .55em;color:var(--cream)}
+.finale__display .reveal-mask{padding-bottom:.06em}
+.finale__display [data-reveal-y]{display:block;font-size:clamp(3rem,7.5vw,6.4rem)}
+.finale__to{font-style:italic;color:var(--cream-dim);font-size:clamp(1.7rem,3.6vw,3rem)!important;line-height:1.1}
+.finale__gold{font-style:italic;background:linear-gradient(120deg,var(--gold-bright),var(--gold),var(--gold-deep));-webkit-background-clip:text;background-clip:text;color:transparent}
+.finale__rule{display:block;width:76px;height:2px;background:linear-gradient(90deg,var(--gold-2),var(--gold-deep));margin:0 0 1.8em}
+.finale__sub{font-family:var(--sans);font-weight:500;font-size:.82rem;letter-spacing:.3em;text-transform:uppercase;color:var(--cream);line-height:2.1;margin:0}
 .finale__title{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,5.4vw,4.4rem);line-height:1.18;color:var(--cream);margin:0 0 1.4em}
 .finale__title em{font-style:italic;color:var(--gold-bright)}
 .finale__title .reveal-mask{padding-bottom:.06em}
