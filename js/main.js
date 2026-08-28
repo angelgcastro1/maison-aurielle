@@ -153,12 +153,16 @@
     function upd(y, prog) {
       if (nav) {
         nav.classList.toggle("solid", y > 60);
-        // hide while actively scrolling (past the hero) …
-        if (Math.abs(y - last) > 2 && y > 300) nav.classList.add("hide");
-        if (y <= 300) nav.classList.remove("hide");
-        // … and glide back in once scrolling goes idle
-        clearTimeout(idleTimer);
-        idleTimer = setTimeout(function () { nav.classList.remove("hide"); }, 700);
+        var moving = Math.abs(y - last) > 1;
+        if (moving) {
+          // actively scrolling → hide (except at the very top)
+          if (y > 120) nav.classList.add("hide");
+          else nav.classList.remove("hide");
+          // restart the idle countdown ONLY on real movement
+          clearTimeout(idleTimer);
+          idleTimer = setTimeout(function () { nav.classList.remove("hide"); }, 650);
+        }
+        // no movement → leave the pending idle timer alone so it can fire
       }
       if (fill) fill.style.transform = "scaleY(" + (prog || 0) + ")";
       last = y;
