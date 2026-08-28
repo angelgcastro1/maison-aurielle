@@ -323,8 +323,8 @@
   }
   // On touch devices seeks are costly, so ease faster and only seek when
   // the video has caught up with the previous seek (no queue pile-up).
-  var _seekMin = isTouch ? 0.045 : 0.008;
-  var _easeK = isTouch ? 0.24 : 0.16;
+  var _seekMin = isTouch ? 0.045 : 0.006;
+  var _easeK = isTouch ? 0.26 : 0.22; // catch up faster so motion tracks the scroll
   function scrubLoop() {
     for (var i = 0; i < _scrubbers.length; i++) {
       var s = _scrubbers[i], vid = s.vid;
