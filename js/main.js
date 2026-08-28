@@ -60,6 +60,30 @@
     setupVideo(document.getElementById("craftVideo"), "craft", { loop: false, autoplay: false });
     setupVideo(document.getElementById("giftVideo"), "gift", { loop: false, autoplay: false });
     setupVideo(document.getElementById("finaleVideo"), "finale", { loop: false, autoplay: false });
+    ambientBg(); // subtle looping backdrop for the private-viewing section
+  }
+
+  /* subtle background loop — only loads once the section is near view */
+  function ambientBg() {
+    var el = document.getElementById("privateVideo");
+    var sec = document.getElementById("private");
+    if (!el || !sec) return;
+    if (reduced) { // still show a still frame for reduced-motion users
+      var p = AURIELLE.poster("private");
+      if (p && p.primary) { el.poster = p.primary; el.classList.add("ready"); }
+      return;
+    }
+    var started = false;
+    function begin() {
+      if (started) return; started = true;
+      setupVideo(el, "private", { loop: true, autoplay: true });
+    }
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (en) {
+        if (en[0].isIntersecting) { begin(); io.disconnect(); }
+      }, { rootMargin: "300px" });
+      io.observe(sec);
+    } else { begin(); }
   }
 
   function setupVideo(el, key, opt) {
