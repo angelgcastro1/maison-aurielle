@@ -238,14 +238,15 @@
   </section>
 
   <!-- ============ 7 · PRIVATE VIEWING / CONSULTATION ============ -->
-  <section id="private" class="private section">
-    <div class="private__bg" aria-hidden="true">
-      <video class="private__video" id="privateVideo" playsinline muted loop preload="none"
-             data-local="assets/private-bracelet.mp4" data-poster-local="assets/posters/private.png"></video>
-      <div class="private__scrim"></div>
-    </div>
-    <div class="wrap">
-      <div class="invite" data-reveal-card>
+  <section id="private" class="private">
+    <div class="private__sticky">
+      <div class="private__bg" aria-hidden="true">
+        <video class="private__video" id="privateVideo" playsinline muted preload="none"
+               data-local="assets/private-bracelet.mp4" data-poster-local="assets/posters/private.png"></video>
+        <div class="private__scrim"></div>
+      </div>
+      <div class="wrap">
+        <div class="invite">
         <div class="invite__edge" aria-hidden="true"></div>
         <p class="eyebrow" data-reveal>By Appointment</p>
         <h2 class="display display--lg" data-reveal>A private viewing,<br/>arranged for you alone.</h2>
@@ -254,6 +255,7 @@
           <button class="btn btn--gold" data-open-consult="viewing" data-magnetic>Reserve a Private Viewing</button>
           <button class="btn btn--line" data-open-consult="consultation">Book a Consultation</button>
           <button class="btn btn--line" data-open-consult="custom">Begin a Custom Piece</button>
+          </div>
         </div>
       </div>
     </div>
