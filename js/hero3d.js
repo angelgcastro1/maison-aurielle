@@ -173,7 +173,7 @@ window.AurielleGem = (function () {
     /* ---- carousel state ---- */
     var designs = [buildSolitaire, buildHalo, buildTrilogy];
     var built = [null, null, null];
-    var idx = 0, active = null, switching = false, mountScale = 1.0;
+    var idx = 0, active = null, mountScale = 1.0;
     function getDesign(i) { if (!built[i]) built[i] = designs[i](); return built[i]; }
     function fitScale() {
       // portrait stages (tablet/mobile) get a smaller ring, raised in frame,
@@ -184,34 +184,26 @@ window.AurielleGem = (function () {
     function mount(i) {
       active = getDesign(i);
       mountScale = fitScale();
-      active.group.position.y = 0.12; // lifted — clears the arrows and name below
+      active.group.position.y = 0.16; // lifted — the controls tuck just beneath
       active.group.scale.setScalar(mountScale);
       scene.add(active.group);
       if (locked) applyColor(locked);
     }
     mount(0);
 
+    var introT = 0; // 0..1 intro progress for the incoming ring (self-animated)
     function switchTo(dir) {
-      if (switching) return active.name;
-      switching = true;
-      var old = active;
-      idx = (idx + dir + designs.length) % designs.length;
-      var hasGsap = (typeof gsap !== "undefined") && !reduced;
-      function place() {
-        scene.remove(old.group);
+      // Bulletproof: swap immediately, animate only the intro of the new ring.
+      // No external callbacks — nothing can leave the carousel stuck.
+      try {
+        scene.remove(active.group);
+        idx = (idx + dir + designs.length) % designs.length;
         mount(idx);
-        active.group.rotation.x = cRot.x; active.group.rotation.y = cRot.y - dir * 0.9;
-        if (hasGsap) {
-          active.group.scale.setScalar(0.02);
-          gsap.to(active.group.scale, { x: mountScale, y: mountScale, z: mountScale, duration: 0.55, ease: "back.out(1.4)" });
-          gsap.to(active.group.rotation, { y: cRot.y, duration: 0.55, ease: "power3.out", onComplete: function () { switching = false; } });
-        } else { switching = false; renderOnce(); }
-      }
-      if (hasGsap) {
-        gsap.to(old.group.scale, { x: 0.02, y: 0.02, z: 0.02, duration: 0.3, ease: "power2.in" });
-        gsap.to(old.group.rotation, { y: cRot.y + dir * 0.9, duration: 0.3, ease: "power2.in", onComplete: place });
-      } else { place(); }
-      return getDesign(idx).name;
+        introT = 0; // frame() eases it to 1 (scale-up + settle spin)
+        tRot.y = cRot.y - dir * 0.7; // slight turn-in from the travel direction
+        if (!running) renderOnce();
+      } catch (e) { /* keep the stage alive no matter what */ }
+      return active ? active.name : "";
     }
 
     /* ---- lights ---- */
@@ -281,9 +273,9 @@ window.AurielleGem = (function () {
     function resize() {
       var w = stage.clientWidth, h = stage.clientHeight; if (!w || !h) return;
       renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
-      if (active && !switching) {
+      if (active) {
         mountScale = fitScale();
-        active.group.scale.setScalar(mountScale);
+        if (introT >= 1) active.group.scale.setScalar(mountScale);
       }
     }
     var ro = ("ResizeObserver" in window) ? new ResizeObserver(function () { resize(); renderOnce(); }) : null;
@@ -302,8 +294,15 @@ window.AurielleGem = (function () {
       }
       cRot.x += (tRot.x - cRot.x) * 0.1;
       cRot.y += (tRot.y - cRot.y) * 0.1;
-      if (active && !switching) { active.group.rotation.x = cRot.x; active.group.rotation.y = cRot.y; }
-      else if (active) { active.group.rotation.x = cRot.x; }
+      if (active) {
+        active.group.rotation.x = cRot.x;
+        active.group.rotation.y = cRot.y;
+        if (introT < 1) { // self-contained arrival animation for a new design
+          introT = Math.min(1, introT + 0.055);
+          var e = 1 - Math.pow(1 - introT, 3); // ease-out cubic
+          active.group.scale.setScalar(mountScale * (0.55 + 0.45 * e));
+        }
+      }
 
       if (!locked) {
         var phase = (t * 0.12) % 1; var seg = phase * moods.length; var mi = Math.floor(seg), fr = seg - mi;
