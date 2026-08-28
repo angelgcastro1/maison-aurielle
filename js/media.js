@@ -28,9 +28,9 @@ window.AURIELLE = (function () {
     "assets/story/light.png":       B + "hf_20260706_065348_8fb69b83-715a-40ec-8459-dc0d95694580.png",
     "assets/ring/ring.png":         B + "hf_20260706_071121_f35f5d7f-65fb-4ca7-9f0a-d2f31742912e.png",
     "assets/finale.mp4":            W + "4de412ef-67d3-4094-989e-144cee50b5f9.mp4",
-    // private-viewing backdrop — served from this repo (committed in assets/)
-    "assets/private-bracelet.mp4":  "assets/private-viewing.mp4",
-    "assets/posters/private.png":   "assets/posters/private.jpg",
+    // private-viewing backdrop — files sit at the repo root, no folder needed
+    "assets/private-bracelet.mp4":  "private-viewing.mp4",
+    "assets/posters/private.png":   "private-poster.jpg",
     "assets/posters/finale.png":    B + "hf_20260706_054146_f60cc815-402b-4ab6-87ec-cec6b55b645a.png"
   };
 
@@ -41,7 +41,7 @@ window.AURIELLE = (function () {
     "assets/craftsmanship-detail.mp4": W + "909eaf8a-ba78-4eb8-a74d-d2b814eeabe0.mp4",
     "assets/gift-reveal.mp4":          W + "daf1a895-974a-4ada-a414-644e00cf4d19.mp4",
     "assets/finale.mp4":               W + "6da1570c-8140-4ad7-97e8-1dc5961be598.mp4",
-    "assets/private-bracelet.mp4":     "assets/private-viewing-m.mp4"
+    "assets/private-bracelet.mp4":     "private-viewing-m.mp4"
   };
   var IS_TOUCH = window.matchMedia && window.matchMedia("(hover:none)").matches;
 
