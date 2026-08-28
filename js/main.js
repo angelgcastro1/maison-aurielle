@@ -140,10 +140,7 @@
         if (en.isIntersecting) { en.target.classList.add("mask-on"); io.unobserve(en.target); }
       });
     }, { threshold: 0.2 });
-    masks.forEach(function (m) {
-      if (m.closest("#hero") && !reduced && hasGSAP) return; // hero is scroll-choreographed
-      io.observe(m);
-    });
+    masks.forEach(function (m) { io.observe(m); });
   }
 
   /* ---------------- loader ---------------- */
@@ -268,8 +265,12 @@
   }
 
   function heroIntro() {
-    // The hero block is scroll-choreographed in heroScene(): it stays hidden
-    // until the film reaches its final frame, then reveals via CSS.
+    // hero lines rise via maskReveal() + CSS delays; fade the extras in on load
+    var tl = gsap.timeline({ delay: 2.1 });
+    var eyebrow = document.querySelector("#hero .eyebrow[data-reveal]");
+    var cta = document.querySelector("#hero .hero__cta[data-reveal]");
+    if (eyebrow) tl.fromTo(eyebrow, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" }, 0);
+    if (cta) tl.fromTo(cta, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" }, 0.9);
   }
 
   /* ---------------- smooth video scrubbing engine ----------------
@@ -312,20 +313,17 @@
     var sec = document.getElementById("hero");
     var vid = document.getElementById("heroVideo");
     if (!sec) return;
+    var content = sec.querySelector(".hero__content");
     var cue = sec.querySelector(".hero__scrollcue");
     var dust = sec.querySelector(".hero__dust");
-    var FILM_END = 0.72;           // the clip finishes here …
-    var TEXT_IN  = 0.70;           // … and the type arrives just as it lands
-    smoothScrub(vid, sec, FILM_END);
+    smoothScrub(vid, sec);
     ScrollTrigger.create({
       trigger: sec, start: "top top", end: "bottom bottom", scrub: true,
       onUpdate: function (self) {
         var pr = self.progress;
-        // headline block waits for the film to play out, then rises in
-        sec.classList.toggle("hero--on", pr >= TEXT_IN);
-        // "scroll to enter" fades once the film is underway
-        if (cue) cue.style.opacity = String(Math.max(0, 1 - pr * 3.2));
-        if (dust) dust.style.opacity = String(Math.max(0.25, 1 - pr * 0.7));
+        if (cue) cue.style.opacity = pr > 0.03 ? String(Math.max(0, 1 - (pr - 0.03) * 14)) : "1";
+        if (content) content.style.opacity = pr < 0.55 ? "1" : String(Math.max(0, 1 - (pr - 0.55) / 0.33));
+        if (dust) dust.style.opacity = String(Math.max(0.15, 1 - pr));
       }
     });
   }
