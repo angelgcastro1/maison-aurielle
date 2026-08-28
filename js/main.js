@@ -149,11 +149,16 @@
   function chrome(lenis) {
     var nav = document.getElementById("nav");
     var fill = document.getElementById("scrollrailFill");
-    var last = 0;
+    var last = 0, idleTimer = 0;
     function upd(y, prog) {
       if (nav) {
         nav.classList.toggle("solid", y > 60);
-        if (y > last && y > 700) nav.classList.add("hide"); else nav.classList.remove("hide");
+        // hide while actively scrolling (past the hero) …
+        if (Math.abs(y - last) > 2 && y > 300) nav.classList.add("hide");
+        if (y <= 300) nav.classList.remove("hide");
+        // … and glide back in once scrolling goes idle
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(function () { nav.classList.remove("hide"); }, 700);
       }
       if (fill) fill.style.transform = "scaleY(" + (prog || 0) + ")";
       last = y;
