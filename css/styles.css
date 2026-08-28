@@ -191,8 +191,10 @@ html.anim #hero .reveal-mask.mask-on:nth-of-type(3) [data-reveal-y]{transition-d
 .story__glow{position:absolute;top:-10%;left:50%;transform:translateX(-50%);width:80vw;height:60vh;z-index:0;pointer-events:none;
   background:radial-gradient(closest-side,rgba(200,163,93,.10),transparent 70%);filter:blur(20px)}
 .story .wrap{position:relative;z-index:1}
-/* max-width in em scales with the display size, so lines never clip */
-.story__lead{margin:0 0 clamp(24px,3.5vw,50px);max-width:none}
+/* headline now sits in the right column, above the copy */
+.story__right{display:flex;flex-direction:column;justify-content:center}
+.story__right .eyebrow{margin-bottom:1em}
+.story__lead{margin:0 0 clamp(20px,2.4vw,36px);max-width:none}
 .story__lead .display{max-width:min(100%,13em)}
 .story__cols{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(28px,5vw,80px);max-width:1000px;margin-left:auto}
 .story__editorial{display:grid;grid-template-columns:.82fr 1fr;gap:clamp(30px,5vw,80px);align-items:center;margin-top:clamp(16px,2.5vw,36px)}
