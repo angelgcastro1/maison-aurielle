@@ -124,7 +124,8 @@ html.lenis,html.lenis body{height:auto}
 /* reveal base states (added only when html.anim) */
 html.anim [data-reveal]{opacity:0;transform:translateY(22px)}
 html.anim [data-reveal-card]{opacity:0;transform:translateY(40px) scale(.985)}
-.reveal-mask{display:block;overflow:hidden;width:100%}
+/* padding-bottom keeps descenders (g, y, p) from being clipped by the mask */
+.reveal-mask{display:block;overflow:hidden;width:100%;padding-bottom:.12em}
 /* safety: a masked line must never be clipped horizontally */
 .reveal-mask [data-reveal-y]{width:100%}
 html.anim .reveal-mask [data-reveal-y]{display:block;transform:translateY(115%)}
@@ -281,14 +282,14 @@ html.anim #hero .reveal-mask.mask-on:nth-of-type(3) [data-reveal-y]{transition-d
    6 · GIFT (sticky scrubbed video)
    ============================================================ */
 .gift{position:relative;height:300vh;background:var(--noir)}
-.gift__sticky{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center}
+.gift__sticky{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;padding:8vh 0}
 .gift__video{position:absolute;top:0;height:100%;left:-4%;width:108%;object-fit:cover;opacity:0;transition:opacity 1.2s var(--ease)}
 .gift__video.ready{opacity:.96}
 .gift__scrim{position:absolute;inset:0;z-index:1;background:
   radial-gradient(92% 105% at 52% 50%,transparent 18%,rgba(8,7,6,.08) 44%,rgba(8,7,6,.34) 70%,rgba(8,7,6,.72) 88%,rgba(8,7,6,.9) 100%),
   linear-gradient(90deg,rgba(8,7,6,.72) 0%,rgba(8,7,6,.15) 40%,transparent 56%)}
 .gift__content{position:relative;z-index:2;width:100%}
-.gift__title{max-width:15ch;margin-bottom:.5em}
+.gift__title{max-width:15ch;margin-bottom:.5em;font-size:clamp(2rem,4.4vw,3.8rem);line-height:1.08}
 .gift__title em{color:var(--gold-bright)}
 .gift__p{max-width:38ch;color:var(--cream-dim);font-size:1.08rem;margin:0 0 2.2em}
 
