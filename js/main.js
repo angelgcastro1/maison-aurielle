@@ -146,7 +146,12 @@
     // width, object-fit and colour filter from the stylesheet — the video
     // then fades in directly on top of a pixel-matched still.
     var img = document.createElement("img");
-    img.className = el.className.replace(/\bready\b/g, "") + " vposter";
+    // "ready" too: the still then resolves to the film's own settled opacity
+    // via .hero__video.ready etc, so the swap is a true no-op.
+    img.className = el.className.replace(/\bready\b/g, "") + " vposter ready";
+    // With a matching still underneath, fading the film in is what caused the
+    // brightness dip. Swap instantly instead — same pixels, so nothing shows.
+    el.style.transition = "none";
     img.alt = "";
     img.setAttribute("aria-hidden", "true");
     img.addEventListener("error", function onerr() {
