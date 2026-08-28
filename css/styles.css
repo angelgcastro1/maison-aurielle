@@ -336,6 +336,12 @@ html.anim #hero .reveal-mask.mask-on:nth-of-type(3) [data-reveal-y]{transition-d
 .private__video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   opacity:0;transition:opacity 2s var(--ease);filter:brightness(1.16) saturate(1.06) contrast(1.02)}
 .private__video.ready{opacity:1}
+/* Still frame injected behind every scrubbed film. It inherits the video's own
+   geometry class, so it lines up exactly; these rules just make it visible and
+   keep it inert. Without it the sticky chapters render black while the clip
+   loads and while the fade runs. */
+.vposter{opacity:1 !important;transition:none !important;pointer-events:none;
+  z-index:0;will-change:auto}
 /* Broad, many-stop falloff: the centre stays clear and bright and the darkness
    creeps in so gradually that no circular edge is ever visible. */
 .private__scrim{position:absolute;inset:0;background:
