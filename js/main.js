@@ -33,7 +33,7 @@
       var lenis = initSmooth();
       chrome(lenis);
       if (!reduced) {
-        [reveals, heroIntro, heroScene, storyScene, collectionTray, craftScene, giftScene, productReveals, trustReveals, finaleScene, magnetic].forEach(function (fn) {
+        [reveals, heroIntro, heroScene, storyScene, collectionTray, craftScene, giftScene, privateScene, productReveals, trustReveals, finaleScene, magnetic].forEach(function (fn) {
           try { fn(); } catch (e) { console.error("[Aurielle scene]", e); }
         });
         window.addEventListener("load", function () { ScrollTrigger.refresh(); });
@@ -74,12 +74,12 @@
     ambientBg(); // subtle looping backdrop for the private-viewing section
   }
 
-  /* subtle background loop — only loads once the section is near view */
+  /* private-viewing film — loads as the section approaches, then scrubs */
   function ambientBg() {
     var el = document.getElementById("privateVideo");
     var sec = document.getElementById("private");
     if (!el || !sec) return;
-    if (reduced) { // still show a still frame for reduced-motion users
+    if (reduced) { // still frame for reduced-motion users
       var p = AURIELLE.poster("private");
       if (p && p.primary) { el.poster = p.primary; el.classList.add("ready"); }
       return;
@@ -87,14 +87,29 @@
     var started = false;
     function begin() {
       if (started) return; started = true;
-      setupVideo(el, "private", { loop: true, autoplay: true });
+      setupVideo(el, "private", { loop: false, autoplay: false });
     }
     if ("IntersectionObserver" in window) {
       var io = new IntersectionObserver(function (en) {
         if (en[0].isIntersecting) { begin(); io.disconnect(); }
-      }, { rootMargin: "300px" });
+      }, { rootMargin: "800px" }); // buffer well ahead so it's ready on arrival
       io.observe(sec);
     } else { begin(); }
+  }
+
+  /* ---------------- private viewing: scrubbed film + card reveal ---------------- */
+  function privateScene() {
+    var sec = document.getElementById("private");
+    var vid = document.getElementById("privateVideo");
+    if (!sec || !vid) return;
+    var CARD_IN = 0.72;              // the invitation arrives here …
+    smoothScrub(vid, sec);           // … while the film runs the full section
+    ScrollTrigger.create({
+      trigger: sec, start: "top top", end: "bottom bottom", scrub: true,
+      onUpdate: function (self) {
+        sec.classList.toggle("private--on", self.progress >= CARD_IN);
+      }
+    });
   }
 
   function setupVideo(el, key, opt) {
