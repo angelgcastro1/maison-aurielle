@@ -399,7 +399,13 @@
   // (e.g. 0.72 → the film finishes at 72%, leaving room for what follows)
   function smoothScrub(vid, sec, endAt) {
     if (!vid || !sec) return null;
-    var st = ScrollTrigger.create({ trigger: sec, start: "top top", end: "bottom bottom", scrub: 0.6 });
+    // scrub:true, NOT a scrub duration. The loop below already eases toward
+    // this progress with _easeK, so a scrub value here smooths the same signal
+    // a second time: Lenis (475ms) + scrub 0.6 (600ms) + _easeK (201ms) put the
+    // film ~1.27s behind the wheel, while text parallax on scrub:true sat at
+    // ~475ms. Layers in one viewport trailing each other by 800ms is what
+    // reads as roughness. One filter after Lenis, not two.
+    var st = ScrollTrigger.create({ trigger: sec, start: "top top", end: "bottom bottom", scrub: true });
     _scrubbers.push({ vid: vid, st: st, cur: 0, endAt: endAt || 1 });
     if (!_scrubRunning) { _scrubRunning = true; requestAnimationFrame(scrubLoop); }
     return st;
@@ -409,52 +415,71 @@
   var _seekMin = isTouch ? 0.02 : 0.006;  // finer steps = less jumpy on touch
   var _easeK = isTouch ? 0.15 : 0.22;     // gentler easing smooths flick-scrolling
   var _stallMs = 260;                 // if a seek hasn't completed by now, retry
+  /* One scrubber, one frame. This lives in its own function on purpose: the
+     async callbacks below (the "seeked" listener and the timeout) capture
+     `vid`, and when this was inlined in the for-loop `var vid` was shared
+     across every iteration. By the time a callback ran, `vid` had already been
+     reassigned to the LAST scrubber of that frame — so the listener was
+     removed from the wrong element and revealVideo() revealed the wrong film.
+     The film that actually synced never got .ready, sat at opacity 0, and
+     looked like the animation had stopped. A per-call scope fixes it. */
+  function stepScrubber(s, now) {
+    var vid = s.vid;
+    var target = Math.min(1, ((s.st && s.st.progress) || 0) / s.endAt);
+
+    if (!vid.duration || vid.readyState < 1) {
+      if (s.st && !s.st.isActive) s.cur = target;
+      return;
+    }
+
+    // First frame after load: jump straight to the scroll position and only
+    // then reveal the video, so it fades in on the correct frame.
+    // NOTE: this must run BEFORE the isActive gate below. These sections are
+    // sticky, so the film is on screen for a full viewport of scrolling
+    // before the trigger's "top top" start fires. Gating the reveal on
+    // isActive left the section black until you scrolled past it.
+    if (vid.dataset.awaitSync === "1") {
+      s.cur = target;
+      var t0 = Math.min(vid.duration - 0.05, Math.max(0, target * vid.duration));
+      delete vid.dataset.awaitSync;
+      vid.addEventListener("seeked", function onSynced() {
+        vid.removeEventListener("seeked", onSynced);
+        revealVideo(vid);
+      });
+      try { vid.currentTime = t0; } catch (e) { revealVideo(vid); }
+      // if the decoder never reports the seek, show it anyway
+      setTimeout(function () { revealVideo(vid); }, 400);
+      return;
+    }
+
+    // off-screen: stay in sync cheaply, do no seeking
+    if (s.st && !s.st.isActive) { s.cur = target; return; }
+
+    s.cur += (target - s.cur) * _easeK;
+    if (Math.abs(target - s.cur) < 0.0006) s.cur = target;
+    var tt = Math.min(vid.duration - 0.05, Math.max(0, s.cur * vid.duration));
+
+    // A seek that never reports back (common on mobile decoders) used to
+    // freeze the scrub forever. Retry once it has clearly stalled.
+    var stalled = vid.seeking && (now - (s.seekAt || 0) > _stallMs);
+    if (Math.abs(vid.currentTime - tt) > _seekMin && (!vid.seeking || stalled)) {
+      try { vid.currentTime = tt; s.seekAt = now; } catch (e) {}
+    }
+  }
+
   function scrubLoop(now) {
     now = now || performance.now();
-    for (var i = 0; i < _scrubbers.length; i++) {
-      var s = _scrubbers[i], vid = s.vid;
-      var target = Math.min(1, ((s.st && s.st.progress) || 0) / s.endAt);
-
-      if (!vid.duration || vid.readyState < 1) {
-        if (s.st && !s.st.isActive) s.cur = target;
-        continue;
+    try {
+      for (var i = 0; i < _scrubbers.length; i++) {
+        // one bad scrubber must not take the others down with it
+        try { stepScrubber(_scrubbers[i], now); } catch (e) {}
       }
-
-      // First frame after load: jump straight to the scroll position and only
-      // then reveal the video, so it fades in on the correct frame.
-      // NOTE: this must run BEFORE the isActive gate below. These sections are
-      // sticky, so the film is on screen for a full viewport of scrolling
-      // before the trigger's "top top" start fires. Gating the reveal on
-      // isActive left the section black until you scrolled past it.
-      if (vid.dataset.awaitSync === "1") {
-        s.cur = target;
-        var t0 = Math.min(vid.duration - 0.05, Math.max(0, target * vid.duration));
-        delete vid.dataset.awaitSync;
-        vid.addEventListener("seeked", function onSynced() {
-          vid.removeEventListener("seeked", onSynced);
-          revealVideo(vid);
-        });
-        try { vid.currentTime = t0; } catch (e) { revealVideo(vid); }
-        // if the decoder never reports the seek, show it anyway
-        setTimeout(function () { revealVideo(vid); }, 400);
-        continue;
-      }
-
-      // off-screen: stay in sync cheaply, do no seeking
-      if (s.st && !s.st.isActive) { s.cur = target; continue; }
-
-      s.cur += (target - s.cur) * _easeK;
-      if (Math.abs(target - s.cur) < 0.0006) s.cur = target;
-      var tt = Math.min(vid.duration - 0.05, Math.max(0, s.cur * vid.duration));
-
-      // A seek that never reports back (common on mobile decoders) used to
-      // freeze the scrub forever. Retry once it has clearly stalled.
-      var stalled = vid.seeking && (now - (s.seekAt || 0) > _stallMs);
-      if (Math.abs(vid.currentTime - tt) > _seekMin && (!vid.seeking || stalled)) {
-        try { vid.currentTime = tt; s.seekAt = now; } catch (e) {}
-      }
+    } finally {
+      // ALWAYS reschedule. This used to sit bare after the loop, so a single
+      // throw anywhere in it killed the rAF chain and every film stopped
+      // scrubbing for the rest of the page life, with a reload the only cure.
+      requestAnimationFrame(scrubLoop);
     }
-    requestAnimationFrame(scrubLoop);
   }
 
   /* ---------------- hero: scroll-scrubbed cinema ---------------- */
@@ -695,7 +720,8 @@
     if (vid && !reduced) {
       gsap.fromTo(vid, { scale: 1 }, {
         scale: 1.16, ease: "power2.in", transformOrigin: "50% 46%",
-        scrollTrigger: { trigger: sec, start: "top top", end: "bottom bottom", scrub: 0.6 }
+        // matches the film it is scaling — see smoothScrub above
+        scrollTrigger: { trigger: sec, start: "top top", end: "bottom bottom", scrub: true }
       });
     }
     if (cta) gsap.fromTo(cta, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out",
