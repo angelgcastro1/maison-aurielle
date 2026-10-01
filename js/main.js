@@ -83,8 +83,13 @@
     var sec = document.getElementById("private");
     var vid = document.getElementById("privateVideo");
     if (!sec || !vid) return;
-    var CARD_IN = 0.72;              // the invitation arrives here …
-    smoothScrub(vid, sec);           // … while the film runs the full section
+    // The film now FINISHES exactly where the invitation arrives, instead of
+    // running on underneath it to the end of the section. The last 22% of the
+    // scroll is reading room: the footage is settled on its closing frame and
+    // the card is up. Section is 460svh so the film still plays at ~5.4s per
+    // screen over its 78% — in step with the hero.
+    var CARD_IN = 0.78;
+    smoothScrub(vid, sec, CARD_IN);
     ScrollTrigger.create({
       trigger: sec, start: "top top", end: "bottom bottom", scrub: true,
       onUpdate: function (self) {
@@ -113,14 +118,24 @@
     // Backdrop goes up straight away — never wait for the clip to decide the
     // section isn't black.
     posterBackdrop(el, AURIELLE.poster(key));
-    var io = new IntersectionObserver(function (entries) {
-      var vis = entries[0].isIntersecting;
-      if (vis && !loaded) {
+    var NEAR = 1600;
+    var io = new IntersectionObserver(function () {
+      // Measure the section ourselves rather than trusting entries[0].
+      // The observer can deliver several queued records in one callback when
+      // the page is scrolled quickly, and entries[0] is then the OLDEST of
+      // them — frequently the "not intersecting" one. Reading it meant the
+      // "now visible" record was discarded, setupVideo never ran, and because
+      // no further boundary is crossed while you sit in that section the clip
+      // never loaded at all for the rest of the visit. It bit the finale most
+      // because by then you are scrolling fast: the section showed its poster
+      // and nothing ever moved.
+      var r = sec.getBoundingClientRect(), vh = window.innerHeight;
+      var near = r.top < vh + NEAR && r.bottom > -NEAR;
+      if (near && !loaded) {
         loaded = true;
         setupVideo(el, key, { loop: false, autoplay: false });
-      } else if (!vis && loaded && isTouch) {
+      } else if (!near && loaded && isTouch) {
         // only release when genuinely far away (avoids load/unload thrash)
-        var r = sec.getBoundingClientRect(), vh = window.innerHeight;
         if (r.bottom < -vh || r.top > vh * 2) {
           try { el.pause(); el.removeAttribute("src"); el.load(); } catch (e) {}
           concealVideo(el);
@@ -410,11 +425,24 @@
     if (!_scrubRunning) { _scrubRunning = true; requestAnimationFrame(scrubLoop); }
     return st;
   }
-  // On touch devices seeks are costly, so ease faster and only seek when
-  // the video has caught up with the previous seek (no queue pile-up).
-  var _seekMin = isTouch ? 0.02 : 0.006;  // finer steps = less jumpy on touch
+  /* Safari's seek path costs far more than Chrome's, and it is the only
+     browser where this scrub felt rough. The cause was the threshold below.
+
+     _seekMin is compared against a difference in SECONDS of footage. It was
+     0.006 — six milliseconds — while these films run at 24-30fps, i.e. 33-42ms
+     per frame. So we were asking for seeks five to seven times finer than a
+     single frame: requests that cannot change the displayed image no matter
+     what. Chrome swallows the waste. Safari queues the seeks, falls behind,
+     and stutters — worst when nearly settled, because the eased target keeps
+     creeping by fractions of a frame and every creep asked for another seek.
+
+     One frame is the smallest step that can show anything new, so that is the
+     floor. Safari gets two, plus a longer stall window before we retry a seek
+     it is still working on. */
+  var _isSafari = /^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i.test(navigator.userAgent);
+  var _seekMin = isTouch ? 0.05 : (_isSafari ? 0.066 : 0.034);
   var _easeK = isTouch ? 0.15 : 0.22;     // gentler easing smooths flick-scrolling
-  var _stallMs = 260;                 // if a seek hasn't completed by now, retry
+  var _stallMs = _isSafari ? 420 : 260;   // if a seek hasn't completed by now, retry
   /* One scrubber, one frame. This lives in its own function on purpose: the
      async callbacks below (the "seeked" listener and the timeout) capture
      `vid`, and when this was inlined in the for-loop `var vid` was shared
