@@ -213,7 +213,11 @@
         // seeked to the current scroll position — otherwise the poster frame
         // visibly jumps to frame 0 the moment the video appears.
         el.dataset.awaitSync = "1";
-        setTimeout(function () { revealVideo(el); }, 2000); // failsafe
+        // Failsafe only for the case where there is no still behind the film
+        // to cover the wait. With a backdrop present, forcing the film visible
+        // on a timer is precisely what made it jump — the sync path above
+        // owns the reveal instead.
+        setTimeout(function () { if (!el.__vposter) revealVideo(el); }, 2000);
       }
       if (hasGSAP) ScrollTrigger.refresh();
     });
@@ -470,13 +474,34 @@
       s.cur = target;
       var t0 = Math.min(vid.duration - 0.05, Math.max(0, target * vid.duration));
       delete vid.dataset.awaitSync;
-      vid.addEventListener("seeked", function onSynced() {
-        vid.removeEventListener("seeked", onSynced);
+
+      /* Reveal ONLY once the decoder is actually sitting on the frame the
+         scroll position asks for. This used to fire on a blind 400ms timer,
+         so a seek still in flight meant the film appeared on a stale frame
+         and then snapped to the right one — the jump at the start of a
+         section. Waiting now costs nothing to look at: the layer behind it is
+         this same film's frame 0, at the same opacity, pixel-matched.
+         Checks against the LIVE target rather than t0, so if the scroll has
+         moved on while the decoder worked we still reveal at the right
+         moment instead of waiting for a frame that is no longer wanted. */
+      var settle = function () {
+        if (vid.seeking || !vid.duration) return false;
+        var want = Math.min(1, ((s.st && s.st.progress) || 0) / s.endAt) * vid.duration;
+        want = Math.min(vid.duration - 0.05, Math.max(0, want));
+        if (Math.abs(vid.currentTime - want) > 0.12) return false;
         revealVideo(vid);
+        return true;
+      };
+      vid.addEventListener("seeked", function onSynced() {
+        if (settle()) vid.removeEventListener("seeked", onSynced);
       });
-      try { vid.currentTime = t0; } catch (e) { revealVideo(vid); }
-      // if the decoder never reports the seek, show it anyway
-      setTimeout(function () { revealVideo(vid); }, 400);
+      try { vid.currentTime = t0; } catch (e) { revealVideo(vid); return; }
+      // Last resort only: if the decoder never settles we would rather show a
+      // slightly-off frame than leave the still up forever.
+      var tries = 0;
+      var poll = setInterval(function () {
+        if (settle() || ++tries > 30) { clearInterval(poll); if (tries > 30) revealVideo(vid); }
+      }, 100);
       return;
     }
 
