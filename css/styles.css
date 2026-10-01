@@ -73,12 +73,13 @@ html.lenis,html.lenis body{height:auto}
 .eyebrow{font-family:var(--sans);font-weight:500;font-size:.72rem;letter-spacing:.42em;
   text-transform:uppercase;color:var(--gold);margin:0 0 1.4em}
 .eyebrow--light{color:var(--champagne)}
-/* margin:0 auto centred this inside --maxw, which added a gutter on top of
-   --pad once the window passed 1560px. The navbar is full width with only
-   --pad, so every heading below it sat further in than the brand mark — 60px
-   at 1680, ~215px on a wide display. Anchoring left keeps the readability cap
-   but puts the content on the same line as the logo. */
-.wrap{max-width:var(--maxw);margin:0 auto 0 0;padding-left:var(--pad);padding-right:var(--pad);width:100%}
+/* Centred, deliberately. Left-anchoring this to match the navbar dragged the
+   product grid, the assurance grid and the private-viewing card off to the
+   left with dead space on the right — they are symmetric layouts and want a
+   symmetric container. Only the hero headline is left-anchored (see
+   .hero__content); .finale__content already uses this same centred measure,
+   so the last section lines up with these. */
+.wrap{max-width:var(--maxw);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad);width:100%}
 .section{position:relative;padding:clamp(90px,13vh,190px) 0}
 
 /* ---------- Buttons ---------- */
@@ -347,7 +348,7 @@ html.anim #hero .reveal-mask.mask-on:nth-of-type(3) [data-reveal-y]{transition-d
 /* pinned cinematic chapter: film scrubs, card arrives at ~72%, film finishes */
 /* 400svh for the same reason as the hero: a 15s film over 200vh of scroll ran
    at 7.5s per screen. 300vh of scroll puts it at 5.0, matching the hero. */
-.private{position:relative;height:400svh;background:linear-gradient(180deg,#0b0a0d,var(--noir))}
+.private{position:relative;height:460svh;background:linear-gradient(180deg,#0b0a0d,var(--noir))}
 .private__sticky{position:sticky;top:0;height:100svh;min-height:600px;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .private__bg{position:absolute;inset:0;z-index:0;pointer-events:none}
 .private__video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
@@ -595,7 +596,7 @@ html.anim #private .invite{transition:opacity 1.1s var(--ease-out),transform 1.1
   .hero{height:400svh}
   .craft{height:340vh}
   .gift{height:300vh}
-  .private{height:400svh}
+  .private{height:460svh}
   .finale{height:260svh}
   /* full-bleed at natural scale — the desktop widening would over-zoom here */
   .hero__video,.craft__video,.gift__video,.finale__video,.private__video{
