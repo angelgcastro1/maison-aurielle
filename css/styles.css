@@ -46,7 +46,15 @@ canvas{display:block}
    skip painting off-screen sections. Video resolution is untouched. */
 /* desktop only — on mobile these compositing hints can destabilise sticky pins */
 @media (min-width:1025px){
-  .hero__sticky,.craft__sticky,.gift__sticky,.finale__sticky{will-change:transform;transform:translateZ(0)}
+  /* The sticky CONTAINERS deliberately carry no transform and no will-change.
+     Promoting a position:sticky element hands its placement to the compositor
+     while the page scrolls at fractional offsets (Lenis), so the stuck layer
+     rounds to whole device pixels and the section underneath does not — which
+     shows up as a shudder right at the pin, the "breaking point" of each
+     animation. private__sticky never had these hints and was the one section
+     that always behaved; the others now match it.
+     The films inside keep their own promotion on the next line — that is
+     where the compositing actually helps. */
   .hero__video,.craft__video,.gift__video,.finale__video,.private__video{
     backface-visibility:hidden;transform:translateZ(0)}
 }
@@ -702,5 +710,3 @@ html.is-safari .btn--ghost{backdrop-filter:none;-webkit-backdrop-filter:none;bac
 html.is-safari .drawer__scrim{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(6,5,4,.78)}
 html.is-safari .modal__scrim{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(6,5,4,.86)}
 html.is-safari .private__video{filter:none}
-html.is-safari .hero__sticky,html.is-safari .craft__sticky,
-html.is-safari .gift__sticky,html.is-safari .finale__sticky{will-change:auto}
