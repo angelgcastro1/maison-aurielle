@@ -52,7 +52,12 @@ canvas{display:block}
 }
 /* NOTE: never apply content-visibility to a pinned/sticky section — it breaks
    the pin. Only the plain, non-pinned sections get it. */
-#story,#collection,#products,#trust{content-visibility:auto;contain-intrinsic-size:1px 900px}
+/* content-visibility:auto was here with contain-intrinsic-size 900px. Measured
+   at 1440x900 the real heights are 1044 / 1062 / 1134 / 1134, so each section
+   grew 144-234px the first time it rendered — 774px total, nearly a full
+   screen of document growth arriving in four jolts while you scroll, with
+   every ScrollTrigger below each one re-resolving as it happened. On a page
+   this size the render saving did not pay for that. */
 .piece__img img,.card__media img,.story__img{will-change:transform}
 
 /* Lenis */
