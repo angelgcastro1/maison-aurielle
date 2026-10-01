@@ -23,6 +23,11 @@
   }
 
   function run() {
+    // Lets the stylesheet give WebKit a cheaper compositing path for the few
+    // effects that sit on top of moving film — the grain blend layer, the
+    // backdrop blurs, the filter on the private video. Chrome is smooth with
+    // all of them and keeps them; see the SAFARI RELIEF block in styles.css.
+    if (_isSafari) doc.classList.add("is-safari");
     wireMedia();
     buildProducts();
     hideLoader();
