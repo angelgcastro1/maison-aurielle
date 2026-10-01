@@ -671,3 +671,36 @@ html.anim #private .invite{transition:opacity 1.1s var(--ease-out),transform 1.1
   .craft__points li{position:relative;left:auto;right:auto;opacity:1;transform:none;margin-bottom:26px}
   .craft__points{position:static;padding-top:20px}
 }
+
+
+/* ============================================================
+   SAFARI RELIEF
+   WebKit pays far more than Blink for three things here, and all three sit on
+   top of film that changes every frame. Chrome is smooth with them, so Chrome
+   keeps them; only Safari takes the cheaper path (html.is-safari is set in
+   main.js).
+
+   . .grain is position:fixed with inset:-50% — four viewports of area — with
+     mix-blend-mode:overlay and an infinite transform animation. A blend mode
+     makes the compositor read its backdrop back every frame, and that
+     backdrop is a scrubbing 1080p video. Most expensive thing on the page.
+   . backdrop-filter: blur(10px) on the nav and blur(16px) saturate(1.1) on
+     the 800x510 invitation card, both over moving video, so the blur result
+     can never be cached between frames.
+   . a per-frame CSS filter on the private film — a 1920x1072 surface being
+     seeked continuously.
+
+   The replacements raise opacity to stand in for the lost blur, so the look
+   holds up.
+   ============================================================ */
+html.is-safari .grain{display:none}
+html.is-safari .nav.solid{backdrop-filter:none;-webkit-backdrop-filter:none;
+  background:linear-gradient(180deg,rgba(10,9,8,.95),rgba(10,9,8,.78) 70%,transparent)}
+html.is-safari .invite{backdrop-filter:none;-webkit-backdrop-filter:none;
+  background:linear-gradient(160deg,rgba(24,18,13,.93),rgba(9,8,7,.96))}
+html.is-safari .btn--ghost{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(255,255,255,.05)}
+html.is-safari .drawer__scrim{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(6,5,4,.78)}
+html.is-safari .modal__scrim{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(6,5,4,.86)}
+html.is-safari .private__video{filter:none}
+html.is-safari .hero__sticky,html.is-safari .craft__sticky,
+html.is-safari .gift__sticky,html.is-safari .finale__sticky{will-change:auto}
